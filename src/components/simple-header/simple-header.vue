@@ -2,7 +2,7 @@
   <div class="simple-header">
     <span class="logo">SHOPPING</span>
     <span class="welcome">{{word}}</span>
-    <span class="tip" v-if="word === '欢迎注册'">已有账号？<span class="btn">请登录</span></span>
+    <span class="tip" v-if="word === '欢迎注册'">已有账号？<router-link to="/login" class="btn">请登录</router-link></span>
   </div>
 </template>
 

@@ -2,7 +2,17 @@
   <div class="register-container">
     <simple-header word="欢迎注册"></simple-header>
     <div class="main">
-      <ul class="form-container">
+      <div class="step-container">
+        <el-steps :active="active" align-center>
+          <el-step title="填写基本信息">
+            <i class="fa fa-user-o" slot="icon"></i>
+          </el-step>
+          <el-step title="注册成功">
+            <i class="fa fa-check" slot="icon"></i>
+          </el-step>
+        </el-steps>
+      </div>
+      <ul class="form-container" v-if="active === 0">
         <li class="form-item" v-for="(item, index) in infoArr" :key="index">
           <label>{{item.label}}</label>
           <input :type="item.type" class="info" :placeholder="item.placeholder" v-model="user[item.model]" @keyup="checkInfo(item.model)">
@@ -21,6 +31,11 @@
           <div class="sub-btn" @click="submitRegister">立即注册</div>
         </li>
       </ul>
+      <div class="success" v-if="active === 1">
+        <div class="txt">注册成功啦~</div>
+        <router-link class="to-btn" tag="div" to="/login">去登陆</router-link>
+        <router-link class="to-btn" tag="div" to="/">去首页</router-link>
+      </div>
     </div>
   </div>
 </template>
@@ -98,7 +113,8 @@ export default {
         email: '',
         question: '',
         answer: ''
-      }
+      },
+      active: 1
     };
   },
   components: {
@@ -227,14 +243,9 @@ export default {
         return;
       } else {
         Service.register(Object.assign({}, this.user, {createTime: Date.now()})).then(() => {
-          Message.success({
-            message: '注册成功'
-          });
-          setTimeout(() => {
-            this.$router.push('/login');
-          }, 2000);
+          this.active = 1;
         }).catch(res => {
-          if (res.errNo === 1) {
+          if (res.errNo === 10) {
             Message.error({
               message: '注册失败'
             });
@@ -255,6 +266,8 @@ export default {
     box-sizing: border-box;
     width: 100%;
     border-top: 1px solid $color-border;
+    .step-container
+      padding: 30px 10px 10px 10px;
     .form-container
       width: 800px;
       padding: 40px;
@@ -314,4 +327,24 @@ export default {
             color: #5daf34;
           &.red
             color: $color-theme;
+    .success
+      width: 600px;
+      margin: 0 auto;
+      text-align: center;
+      .txt
+        width: 100%;
+        text-align: center;
+        font-size: $font-size-normal-x;
+        color: $color-text;
+        margin: 30px 0;
+      .to-btn
+        display: inline-block;
+        width: 150px;
+        height: 40px;
+        line-height: 40px;
+        font-size: $font-size-normal-x;
+        text-align: center;
+        color: #fff;
+        background: $color-theme;
+        cursor: pointer
 </style>

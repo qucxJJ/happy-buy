@@ -22,8 +22,8 @@
         <div class="tip">请输入用户名:</div>
         <br>
         <label>用户名</label>
-        <input type="text" placeholder="请输入您的用户名"><br>
-        <div class="btn-next" @click="active++">下一步</div>
+        <input type="text" placeholder="请输入您的用户名" v-model="userName"><br>
+        <div class="btn-next" @click="submitUserName">下一步</div>
       </div>
       <div class="box" v-show="active === 1">
         <div class="tip">密保问题为: {{question}}</div>
@@ -31,18 +31,22 @@
         <div class="tip">请输入问题的答案：</div>
         <br>
         <label>答案</label>
-        <input type="text" placeholder="请输入您的答案"><br>
-        <div class="btn-next" @click="active++">下一步</div>
+        <input type="text" placeholder="请输入您的答案" v-model="answer"><br>
+        <div class="btn-next" @click="submitAnswer">下一步</div>
       </div>
       <div class="box" v-show="active === 2">
         <div class="tip">请输入新密码:</div>
         <br>
         <label>密码</label>
-        <input type="text" placeholder="请输入您的新密码"><br>
-        <div class="btn-next" @click="active++">下一步</div>
+        <input type="password" placeholder="请输入您的新密码" v-model="password"><br>
+        <div class="btn-next" @click="submitNewPassword">下一步</div>
       </div>
       <div class="box" v-show="active === 3">
-        <div class="msg">密码重置成功啦~</div>
+        <div class="msg">
+          密码重置成功啦~&nbsp;&nbsp;
+          <router-link class="to-btn" to="/login">去登陆</router-link>
+          看看吧~
+        </div>
       </div>
     </div>
   </div>
@@ -50,19 +54,63 @@
 
 <script type="text/ecmascript-6">
 import SimpleHeader from '@/components/simple-header/simple-header.vue';
+import Service from '@/api';
+import { Message } from 'element-ui';
 export default {
   data () {
     return {
       active: 0,
-      question: '我是谁'
+      userName: '',
+      question: '',
+      answer: '',
+      password: ''
     };
   },
   components: {
     SimpleHeader
   },
   methods: {
-    next () {
-      this.active === 4 ? this.active = 4 : this.active++;
+    submitUserName () {
+      if (!this.userName) {
+        Message.error({
+          message: '请输入用户名哦~'
+        });
+      } else {
+        Service.get_reset_question({userName: this.userName}).then(data => {
+          this.question = data.question;
+          this.active++;
+        }).catch(res => {
+          Message.error({
+            message: res.errStr
+          });
+        });
+      }
+    },
+    submitAnswer () {
+      if (!this.answer) {
+        Message.error({
+          message: '请输入答案哦~'
+        });
+      } else {
+        Service.check_reset_answer({userName: this.userName, answer: this.answer}).then(() => {
+          this.active++;
+        }).catch(res => {
+          Message.error({
+            message: res.errStr
+          });
+        });
+      }
+    },
+    submitNewPassword () {
+      if (!this.password) {
+        Message.error({
+          message: '请输入新密码~'
+        });
+      } else {
+        Service.reset_password({userName: this.userName, password: this.password}).then(() => {
+          this.active++;
+        });
+      }
     }
   }
 };
@@ -128,4 +176,7 @@ export default {
         color: $color-text;
         font-size: $font-size-large;
         text-align: center;
+        .to-btn
+          color: $color-theme;
+          font-weight: bold;
 </style>

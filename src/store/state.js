@@ -1,5 +1,7 @@
 const state = {
   userName: '',
-  userId: ''
+  cartNum: 0,
+  avatar: '',
+  isLogin: false
 };
 export default state;

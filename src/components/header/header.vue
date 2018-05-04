@@ -11,7 +11,7 @@
       </div>
       <ul class="right-list">
         <li>购物车（{{cartNum}}）</li>
-        <li>个人中心</li>
+        <li @click="toUserCenter">个人中心</li>
         <li>收藏夹</li>
         <li>关于我们</li>
       </ul>
@@ -23,28 +23,26 @@
 import Service from '@/api';
 import {mapGetters, mapMutations} from 'vuex';
 export default {
-  data () {
-    return {
-      isLogin: false,
-      cartNum: 0
-    };
-  },
   mounted () {
     Service.get_user_info().then(data => {
       this.setUserName(data.userName);
-      this.cartNum = data.cartNum;
-      this.isLogin = true;
+      this.setCartNum(data.cartNum);
+      this.setAvatar(data.avatar);
+      this.setIsLogin(true);
     }).catch(res => {
       if (res.errNo && res.errNum === 1) {
-        this.userName = '';
-        this.cartNum = 0;
-        this.isLogin = false;
+        this.setUserName('');
+        this.setCartNum(0);
+        this.setAvatar('');
+        this.setIsLogin(false);
       }
     });
   },
   computed: {
     ...mapGetters([
-      'userName'
+      'userName',
+      'cartNum',
+      'isLogin'
     ])
   },
   methods: {
@@ -52,17 +50,24 @@ export default {
       this.$router.push('/login');
     },
     logout () {
-      Service.logout().then((data) => {
+      Service.logout().then(() => {
         this.setUserName('');
-        this.cartNum = 0;
-        this.isLogin = false;
+        this.setCartNum(0);
+        this.setAvatar('');
+        this.setIsLogin(false);
       });
     },
     register () {
       this.$router.push('/register');
     },
+    toUserCenter () {
+      this.userName ? this.$router.push('/user-center') : this.$router.push('/login');
+    },
     ...mapMutations({
-      'setUserName': 'SET_USER_NAME'
+      'setUserName': 'SET_USER_NAME',
+      'setCartNum': 'SET_CART_NUM',
+      'setAvatar': 'SET_AVATAR',
+      'setIsLogin': 'SET_IS_LOGIN'
     })
   }
 };

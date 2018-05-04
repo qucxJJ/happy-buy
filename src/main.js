@@ -5,7 +5,7 @@ import App from './App';
 import router from './router';
 import store from './store';
 import VueLazyLoad from 'vue-lazyload';
-import { Breadcrumb, BreadcrumbItem, Message, Steps, Step, Pagination } from 'element-ui';
+import { Breadcrumb, BreadcrumbItem, Message, Steps, Step, Pagination, Upload, DatePicker } from 'element-ui';
 
 Vue.component(Breadcrumb.name, Breadcrumb);
 Vue.component(BreadcrumbItem.name, BreadcrumbItem);
@@ -13,6 +13,8 @@ Vue.component(Message.name, Message);
 Vue.component(Steps.name, Steps);
 Vue.component(Step.name, Step);
 Vue.component(Pagination.name, Pagination);
+Vue.component(Upload.name, Upload);
+Vue.component(DatePicker.name, DatePicker);
 
 Vue.config.productionTip = false;
 
