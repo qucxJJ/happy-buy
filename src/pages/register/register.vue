@@ -114,7 +114,7 @@ export default {
         question: '',
         answer: ''
       },
-      active: 1
+      active: 0
     };
   },
   components: {

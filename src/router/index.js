@@ -13,6 +13,8 @@ import UserSafe from '@/pages/user-center/safe.vue';
 import UserAddress from '@/pages/user-center/address.vue';
 import ModifyPassword from '@/pages/user-center/modify-password.vue';
 import ModifyPhone from '@/pages/user-center/modify-phone.vue';
+import ModifyEmail from '@/pages/user-center/modify-email.vue';
+import ModifyQuestion from '@/pages/user-center/modify-question.vue';
 Vue.use(Router);
 
 export default new Router({
@@ -57,19 +59,29 @@ export default new Router({
         },
         {
           path: 'safe',
-          component: UserSafe
+          component: UserSafe,
+          children: [
+            {
+              path: 'modify-password',
+              component: ModifyPassword
+            },
+            {
+              path: 'modify-phone',
+              component: ModifyPhone
+            },
+            {
+              path: 'modify-email',
+              component: ModifyEmail
+            },
+            {
+              path: 'modify-question',
+              component: ModifyQuestion
+            }
+          ]
         },
         {
           path: 'address',
           component: UserAddress
-        },
-        {
-          path: 'modify-password',
-          component: ModifyPassword
-        },
-        {
-          path: 'modify-phone',
-          component: ModifyPhone
         }
       ]
     }

@@ -26,7 +26,7 @@ export default {
   width: 100%;
   height: 70px;
   line-height: 70px;
-  padding: 0 10px;
+  padding: 0 20px;
   border-bottom: 1px solid $color-theme;
   font-size: $font-size-large;
   color: #000;

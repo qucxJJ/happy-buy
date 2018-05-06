@@ -1,120 +1,106 @@
 <template>
-  <div class="modify-frame">
+  <div class="modify-question">
     <div class="header">
-      <i class="fa fa-angle-left" @click="toSafe"></i>修改{{name}}
+      <i class="fa fa-angle-left" @click="toSafe"></i>修改安全问题
     </div>
     <div class="step-container">
       <el-steps :active="active" align-center>
-        <el-step :title="'输入原' + name">
-          <i class="fa" :class="'fa-' + icon" slot="icon"></i>
+        <el-step title="验证安全问题答案">
+          <i class="fa fa-question" slot="icon"></i>
         </el-step>
-        <el-step :title="'输入新' + name">
-          <i class="fa" :class="'fa-' + icon" slot="icon"></i>
+        <el-step title="输入新安全问题和答案">
+          <i class="fa fa-question" slot="icon"></i>
         </el-step>
-        <el-step :title="name + '修改成功'">
+        <el-step title="安全问题修改成功">
           <i class="fa fa-check" slot="icon"></i>
         </el-step>
       </el-steps>
     </div>
     <div class="box" v-show="active === 0">
-      <div class="tip">请输入原{{name}}：</div>
+      <div class="tip">您现在的安全问题为 <span class="question">{{oldQuestion}}</span>，请输入安全问题答案验证身份：</div>
       <br>
-      <label>原{{name}}</label>
-      <input :type="inputType" :placeholder="'请输入您原来的' + name" v-model="firstData"><br>
-      <div class="btn-next" @click="handleFirstStep">下一步</div>
+      <label>答案</label>
+      <input type="text" placeholder="请输入您的安全问题的答案" v-model="oldAnswer"><br>
+      <div class="btn-next" @click="checkOldAnswer">下一步</div>
     </div>
     <div class="box" v-show="active === 1">
-      <div class="tip">请输入新密码:</div>
+      <div class="tip">请输入新的安全问题和答案:</div>
       <br>
-      <label>新{{name}}</label>
-      <input :type="inputType" :placeholder="'请输入您的新' + name" v-model="secondData"><br>
-      <div class="btn-next" @click="handleSecondStep">下一步</div>
+      <label>安全问题</label>
+      <input type="text" placeholder="'请输入新的安全问题" v-model="newQuestion"><br>
+      <label>答案</label>
+      <input type="text" placeholder="'请输入问题的答案" v-model="newAnswer"><br>
+      <div class="btn-next" @click="submitNewQuestion">下一步</div>
     </div>
     <div class="box" v-show="active === 2">
       <div class="msg">
-        {{successTip}}
+        安全问题修改成功啦~
       </div>
     </div>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
+import Service from '@/api';
 import { Message } from 'element-ui';
 export default {
-  props: {
-    name: {
-      type: String,
-      default: ''
-    },
-    icon: {
-      type: String,
-      default: ''
-    },
-    inputType: {
-      type: String,
-      default: ''
-    },
-    successTip: {
-      type: String,
-      default: ''
-    },
-    firstStepMethod: {
-      type: Function,
-      default: function () {
-      }
-    },
-    secondStepMethod: {
-      type: Function,
-      default: function () {
-      }
-    }
-  },
   data () {
     return {
-      firstData: '',
-      secondData: '',
+      oldQuestion: '',
+      oldAnswer: '',
+      newQuestion: '',
+      newAnswer: '',
       active: 0
     };
+  },
+  created () {
+    Service.get_old_question().then(data => {
+      this.oldQuestion = data;
+    }).catch(res => {
+      Message.error({
+        message: res.errStr
+      });
+    });
   },
   methods: {
     toSafe () {
       this.$router.push('/user-center/safe');
     },
-    handleFirstStep () {
-      if (!this.firstData) {
+    checkOldAnswer () {
+      if (!this.oldAnswer) {
         Message.error({
-          message: `请输入原${this.name}`
+          message: '请输入答案'
         });
         return;
       }
-      let result = this.firstStepMethod(this.firstData);
-      if (result) {
-        result.then(() => {
-          this.active++;
-        }).catch(res => {
-          Message.error({
-            message: res.errStr
-          });
+      Service.check_old_answer({oldAnswer: this.oldAnswer}).then(() => {
+        this.active++;
+      }).catch(res => {
+        Message.error({
+          message: res.errStr
         });
-      }
+      });
     },
-    handleSecondStep () {
-      if (!this.secondData) {
+    submitNewQuestion () {
+      if (!this.newQuestion) {
         Message.error({
-          message: `请输入新${this.name}`
+          message: '请输入安全问题'
         });
         return;
       }
-      let result = this.secondStepMethod(this.secondData);
-      if (result) {
-        result.then(() => {
-          this.active++;
-        }).catch(res => {
-          Message.error({
-            message: res.errStr
-          });
+      if (!this.newAnswer) {
+        Message.error({
+          message: '请输入答案'
         });
+        return;
       }
+      Service.modify_question_and_answer({question: this.newQuestion, answer: this.newAnswer}).then(() => {
+        this.active++;
+      }).catch(res => {
+        Message.error({
+          message: res.errStr
+        });
+      });
     }
   }
 };
@@ -122,7 +108,7 @@ export default {
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
 @import '~@/common/stylus/variable.styl';
-.modify-frame
+.modify-question
   position: absolute;
   left: 0;
   top: 0;
@@ -158,6 +144,10 @@ export default {
       font-size: $font-size-normal;
       text-align: left;
       color: $color-text
+      .question {
+        color: $color-theme;
+        font-weight: bold;
+      }
     label
       box-sizing: border-box;
       display: inline-block;

@@ -59,8 +59,13 @@ export default {
           password: this.password
         })
         .then(() => {
-          this.setUserName(this.name);
-          this.$router.go(-1);
+          Service.get_user_info().then(data => {
+            this.setUserName(data.userName);
+            this.setCartNum(data.cartNum);
+            this.setAvatar(data.avatar);
+            this.setIsLogin(true);
+            this.$router.go(-1);
+          });
         })
         .catch(res => {
           if (res.errNo === 1) {
@@ -81,7 +86,10 @@ export default {
       this.$router.push('/register');
     },
     ...mapMutations({
-      setUserName: 'SET_USER_NAME'
+      setUserName: 'SET_USER_NAME',
+      'setCartNum': 'SET_CART_NUM',
+      'setAvatar': 'SET_AVATAR',
+      'setIsLogin': 'SET_IS_LOGIN'
     })
   }
 };

@@ -71,7 +71,8 @@ export default {
   },
   created () {
     Service.get_user_extra_data().then(data => {
-      this.newAvatar.url = data.avatar;
+      this.newAvatar.url = data.avatar.url;
+      this.newAvatar.name = data.avatar.name;
       this.realName = data.realName;
       this.sex = data.sex;
       this.birthday = data.birthday ? new Date(data.birthday) : '';
@@ -79,13 +80,11 @@ export default {
   },
   methods: {
     handleAvatarSuccess (res, file) {
-      console.log(file);
       this.newAvatar.url = URL.createObjectURL(file.raw);
       this.newAvatar.name = res.data;
-      console.log(this.newAvatar.name);
     },
     submitEdit () {
-      let birth = new Date(this.birthday).getTime();
+      let birth = this.birthday ? new Date(this.birthday).getTime() : '';
       Service.set_user_extra_data({
         avatar: this.newAvatar.name,
         realName: this.realName,

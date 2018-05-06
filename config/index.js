@@ -31,6 +31,9 @@ module.exports = {
       },
       '/categories': {
         target: 'http://localhost:3000'
+      },
+      '/cities': {
+        target: 'http://localhost:3000'
       }
     },
 

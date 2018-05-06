@@ -1,69 +1,33 @@
 <template>
-  <div class="modify-password">
-    <div class="step-container">
-      <el-steps :active="active" align-center>
-        <el-step title="输入原密码">
-          <i class="fa fa-lock" slot="icon"></i>
-        </el-step>
-        <el-step title="输入新密码">
-          <i class="fa fa-lock" slot="icon"></i>
-        </el-step>
-        <el-step title="密码修改成功">
-          <i class="fa fa-check" slot="icon"></i>
-        </el-step>
-      </el-steps>
-    </div>
-    <div class="box" v-show="active === 0">
-      <div class="tip">请输入原密码：</div>
-      <br>
-      <label>原密码</label>
-      <input type="password" placeholder="请输入您原来的密码" v-model="oldPassword"><br>
-      <div class="btn-next" @click="checkOldPassword">下一步</div>
-    </div>
-    <div class="box" v-show="active === 1">
-      <div class="tip">请输入新密码:</div>
-      <br>
-      <label>新密码</label>
-      <input type="password" placeholder="请输入您的新密码" v-model="newPassword"><br>
-      <div class="btn-next" @click="submitNewPassword">下一步</div>
-    </div>
-    <div class="box" v-show="active === 2">
-      <div class="msg">
-        密码修改成功啦~
-      </div>
-    </div>
-  </div>
+  <modify-safe-setting
+    name="密码"
+    icon="lock"
+    input-type="password"
+    success-tip="密码修改成功啦~"
+    :firstStepMethod="checkOldPassword"
+    :secondStepMethod="submitNewPassword"></modify-safe-setting>
 </template>
 
 <script type="text/ecmascript-6">
 import Service from '@/api';
 import { Message } from 'element-ui';
+import ModifySafeSetting from '@/components/modify-safe-setting/modify-safe-setting.vue';
 export default {
-  data () {
-    return {
-      active: 0,
-      oldPassword: '',
-      newPassword: ''
-    };
+  components: {
+    ModifySafeSetting
   },
   methods: {
-    checkOldPassword () {
-      Service.check_old_password({oldPassword: this.oldPassword}).then(() => {
-        this.active++;
-      }).catch(res => {
-        Message.error({
-          message: res.errStr
-        });
-      });
+    checkOldPassword (password) {
+      return Service.check_old_password({oldPassword: password});
     },
-    submitNewPassword () {
-      Service.modify_password({newPassword: this.newPassword}).then(() => {
-        this.active++;
-      }).catch(res => {
+    submitNewPassword (password) {
+      if (password.length < 6 || password.length > 20) {
         Message.error({
-          message: res.errStr
+          message: '密码长度不正确哦~'
         });
-      });
+        return false;
+      }
+      return Service.modify_password({newPassword: password});
     }
   }
 };

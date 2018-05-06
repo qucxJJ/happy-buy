@@ -8,7 +8,12 @@ let obj = {
     get_product_detail: '/products/get_product_detail',
     get_address_list: '/users/get_address_list',
     get_user_extra_data: '/users/get_user_extra_data',
-    get_email_phone: '/users/get_email_phone'
+    get_email_phone: '/users/get_email_phone',
+    get_old_question: '/users/get_old_question',
+    get_province_list: '/cities/get_province_list',
+    get_cities_list: '/cities/get_cities_list',
+    get_county_list: '/cities/get_county_list',
+    get_slider_pic: '/products/get_slider_pic'
   },
   post: {
     login: '/users/login',
@@ -24,7 +29,15 @@ let obj = {
     check_old_password: '/users/check_old_password',
     modify_password: '/users/modify_password',
     check_old_phone: '/users/check_old_phone',
-    modify_phone: '/users/modify_phone'
+    modify_phone: '/users/modify_phone',
+    check_old_email: '/users/check_old_email',
+    modify_email: '/users/modify_email',
+    check_old_answer: '/users/check_old_answer',
+    modify_question_and_answer: '/users/modify_question_and_answer',
+    add_new_address: '/users/add_new_address',
+    set_default_address: '/users/set_default_address',
+    edit_address_info: '/users/edit_address_info',
+    delete_address: '/users/delete_address'
   }
 };
 

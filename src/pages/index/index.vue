@@ -6,19 +6,27 @@
       <div class="top">
         <side-nav class="aside"></side-nav>
         <div class="slider">
+          <swiper :options="swiperOption">
+            <swiper-slide v-for="(item, index) in sliderPics" :key="index">
+              <img :src="item">
+            </swiper-slide>
+            <div class="swiper-pagination" slot="pagination"></div>
+            <div class="swiper-button-prev" slot="button-prev"></div>
+            <div class="swiper-button-next" slot="button-next"></div>
+          </swiper>
         </div>
       </div>
-      <ul class="floor-container">
-        <li class="floor-item" v-for="(category, index) in categoryData" :key="index">
-          <h2 class="floor-item-title">{{category.categoryName}}</h2>
-          <ul class="floor-item-con">
-            <li class="item" v-for="(item,index1) in category.list" :key="index1">
-              <p class="name">{{item.key}}</p>
-              <img :src="`http://localhost:3000${item.imgUrl}`" alt="">
-            </li>
-          </ul>
-        </li>
-      </ul>
+      <!--<ul class="floor-container">-->
+        <!--<li class="floor-item" v-for="(category, index) in categoryData" :key="index">-->
+          <!--<h2 class="floor-item-title">{{category.categoryName}}</h2>-->
+          <!--<ul class="floor-item-con">-->
+            <!--<li class="item" v-for="(item,index1) in category.list" :key="index1">-->
+              <!--<p class="name">{{item.key}}</p>-->
+              <!--<img :src="`http://localhost:3000${item.imgUrl}`" alt="">-->
+            <!--</li>-->
+          <!--</ul>-->
+        <!--</li>-->
+      <!--</ul>-->
     </div>
   </div>
 </template>
@@ -27,22 +35,51 @@
 import DetailHeader from '@/components/header/header';
 import Search from '@/components/search/search';
 import SideNav from '@/components/side-nav/side-nav.vue';
+import { swiper, swiperSlide } from 'vue-awesome-swiper';
+import 'swiper/dist/css/swiper.css';
 import Service from '@/api';
+import config from '@/common/js/config';
 export default {
   data () {
     return {
-      categoryData: []
+      categoryData: [],
+      sliderPics: [],
+      swiperOption: {
+        notNextTick: true,
+        autoplay: true,
+        loop: true,
+        direction: 'horizontal',
+        grabCursor: true,
+        setWrapperSize: true,
+        autoHeight: true,
+        pagination: {
+          el: '.swiper-pagination'
+        },
+        centeredSlides: true,
+        paginationClickable: true,
+        navigation: {
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev'
+        },
+        keyboard: true,
+        mousewheelControl: true
+      }
     };
   },
   components: {
     DetailHeader,
     Search,
-    SideNav
+    SideNav,
+    swiper,
+    swiperSlide
+  },
+  computed: {
   },
   mounted () {
-    Service.get_category_list().then(data => {
-      this.categoryData = data;
-      console.log(this.categoryData);
+    Service.get_slider_pic().then(data => {
+      this.sliderPics = data.list.map(item => {
+        return `${config.host}${item}`;
+      });
     });
   }
 };
@@ -71,6 +108,11 @@ export default {
         height: 100%;
         vertical-align: top;
         background: #666;
+        .swiper-slide
+          height: 405px;
+          img
+            width: 100%;
+            height: 100%;
     .floor-container
       width: 1080px;
       margin: 20px auto;
