@@ -1,7 +1,6 @@
 <template>
   <div class="user-center">
     <detail-header></detail-header>
-    <search></search>
     <div class="main">
       <ul class="aside">
         <li class="aside-group">
@@ -61,12 +60,10 @@
 
 <script type="text/ecmascript-6">
 import DetailHeader from '@/components/header/header.vue';
-import Search from '@/components/search/search.vue';
 import { mapGetters } from 'vuex';
 export default {
   components: {
-    DetailHeader,
-    Search
+    DetailHeader
   },
   computed: {
     ...mapGetters([
@@ -83,7 +80,7 @@ export default {
   width: 100%;
   .main
     width: 1080px;
-    margin: 0 auto;
+    margin: 30px auto 0;
     .aside
       display: inline-block;
       width: 150px;

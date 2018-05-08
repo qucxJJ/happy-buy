@@ -46,15 +46,25 @@ export default {
     };
   },
   created () {
-    Service.get_product_list().then(data => {
-      this.productData = data;
-      console.log(this.productData);
-    });
+    this.getProductList();
   },
   methods: {
     showProductDetail (productId) {
       console.log(productId);
       this.$router.push('/product-detail?productId=' + productId);
+    },
+    getProductList () {
+      Service.get_product_list({
+        keyword: this.$route.query.keyword
+      }).then(data => {
+        this.productData = data;
+        console.log(this.productData);
+      });
+    }
+  },
+  watch: {
+    '$route.query.keyword' () {
+      this.getProductList();
     }
   }
 };

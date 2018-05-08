@@ -8,7 +8,12 @@
           <div class="item-list" v-for="(name, index1) in item.name" :key="index1">
             <h2 class="sub-title">{{name}}</h2>
             <div class="cate-con">
-              <span v-for="(cate, index2) in item.list[index1]" :key="index2" class="item">{{cate}}</span>
+              <span
+                v-for="(cate, index2) in item.list[index1]"
+                :key="index2" class="item"
+                @click="toProductList(cate)">
+                {{cate}}
+              </span>
             </div>
           </div>
         </div>
@@ -18,80 +23,38 @@
 </template>
 
 <script type="text/ecmascript-6">
+import Service from '@/api';
+import { Message } from 'element-ui';
 export default {
   data () {
     return {
       currentIndex: '',
-      asideData: [
-        {
-          name: ['点心', '蛋糕'],
-          list: [
-            ['软面包', '马卡龙', '千层饼'],
-            ['蒸蛋糕', '脱水蛋糕', '瑞士卷']
-          ]
-        },
-        {
-          name: ['点心1', '蛋糕'],
-          list: [
-            ['软面包', '马卡龙', '千层饼'],
-            ['蒸蛋糕', '脱水蛋糕', '瑞士卷']
-          ]
-        },
-        {
-          name: ['点心2', '蛋糕'],
-          list: [
-            ['软面包', '马卡龙', '千层饼'],
-            ['蒸蛋糕', '脱水蛋糕', '瑞士卷']
-          ]
-        },
-        {
-          name: ['点心3', '蛋糕'],
-          list: [
-            ['软面包', '马卡龙', '千层饼'],
-            ['蒸蛋糕', '脱水蛋糕', '瑞士卷']
-          ]
-        },
-        {
-          name: ['点心4', '蛋糕'],
-          list: [
-            ['软面包', '马卡龙', '千层饼'],
-            ['蒸蛋糕', '脱水蛋糕', '瑞士卷']
-          ]
-        },
-        {
-          name: ['点心5', '蛋糕'],
-          list: [
-            ['软面包', '马卡龙', '千层饼'],
-            ['蒸蛋糕', '脱水蛋糕', '瑞士卷']
-          ]
-        },
-        {
-          name: ['点心6', '蛋糕'],
-          list: [
-            ['软面包', '马卡龙', '千层饼'],
-            ['蒸蛋糕', '脱水蛋糕', '瑞士卷']
-          ]
-        },
-        {
-          name: ['点心7', '蛋糕'],
-          list: [
-            ['软面包', '马卡龙', '千层饼'],
-            ['蒸蛋糕', '脱水蛋糕', '瑞士卷']
-          ]
-        },
-        {
-          name: ['点心8', '蛋糕'],
-          list: [
-            ['软面包', '马卡龙', '千层饼'],
-            ['蒸蛋糕', '脱水蛋糕', '瑞士卷']
-          ]
-        }
-      ]
+      asideData: []
     };
+  },
+  created () {
+    this.getCategoryList();
   },
   methods: {
     handleMouseout () {
       this.currentIndex = '';
+    },
+    getCategoryList () {
+      Service.get_category_list().then(data => {
+        for (let i = 0; i < data.list.length; i += 3) {
+          this.asideData.push({
+            name: [data.list[i].categoryName, data.list[i + 1].categoryName, data.list[i + 2].categoryName],
+            list: [data.list[i].children, data.list[i + 1].children, data.list[i + 2].children]
+          });
+        }
+      }).catch(res => {
+        Message.error({
+          message: res.errStr
+        });
+      });
+    },
+    toProductList (keyword) {
+      this.$router.push(`/product-list?keyword=${keyword}`);
     }
   }
 };
@@ -105,7 +68,7 @@ export default {
   height: 450px;
   position: relative;
   .header
-    width: 180px;
+    width: 220px;
     height: 45px;
     line-height: 45px;
     font-size: $font-size-normal-x;
@@ -114,7 +77,7 @@ export default {
     color: #fff;
   .name-list
     box-sizing: border-box;
-    width: 180px;
+    width: 220px;
     height: 45px;
     line-height: 45px;
     border-top: 1px solid #333;
@@ -127,16 +90,17 @@ export default {
     .title
       position: relative;
       text-align: left;
-      padding: 0 25px;
+      padding: 0 15px;
+      font-size: $font-size-normal;
       .more
         display: inline-block;
         position: absolute;
-        right: 25px;
+        right: 15px;
         top: 13px;
     .content
       box-sizing: border-box;
       position: absolute
-      left: 180px;
+      left: 220px;
       top: 45px;
       width: 600px;
       height: 405px;
@@ -167,4 +131,6 @@ export default {
             font-size: $font-size-normal;
             cursor: pointer;
             color: $color-text;
+            &:hover
+              color: $color-theme;
 </style>
