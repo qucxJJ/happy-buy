@@ -14,19 +14,19 @@
               @mousemove="handleMousemove"></div>
             <div class="float-box" ref="floatBox"></div>
             <img
-              :src="productInfo.imageHost + productInfo.mainImage"
+              :src="productInfo.mainImage"
               class="big-image"
               ref="bigImage">
           </div>
           <div class="big-picture-detail" ref="bigPictureDetail">
-            <img :src="productInfo.imageHost + productInfo.mainImage" ref="detailImage">
+            <img :src="productInfo.mainImage" ref="detailImage">
           </div>
           <div class="small-picture-container">
             <img
-              :src="productInfo.imageHost + item" alt=""
-              v-for="(item, index) in productInfo.smallImages"
+              v-for="(item, index) in productInfo.attributes"
+              :src="item.image"
               :key="index"
-              @click="showSmallPicture(productInfo.imageHost, item)">
+              @click="showSmallPicture(item.image,)">
           </div>
         </div>
         <ul class="simple-info-container">
@@ -62,9 +62,9 @@
               <img
                 v-for="(item, index) in productInfo.attributes"
                 :key="index"
-                :src="productInfo.imageHost + item.image"
+                :src="item.image"
                 :title="item.name"
-                @click="showSmallPicture(productInfo.imageHost, item.image, item.name)"
+                @click="showSmallPicture(item.image, item.name)"
                 :class="{'cur': selectedAttr === item.name}">
             </span>
           </li>
@@ -79,13 +79,13 @@
               <span class="info">库存{{productInfo.stockNum}}件</span>
             </span>
           </li>
-          <li class="collec-con" :class="{'like': collectTxt === '取消收藏'}" @click="toggleCollect">
+          <li class="collec-con" :class="{'like': productInfo.collectStatus === 1}" @click="toggleCollect">
             <i class="fa fa-star"></i>
-            {{collectTxt}}
+            {{productInfo.collectStatus === 1 ? '取消收藏' : '收藏'}}
           </li>
           <li class="btn-con">
             <div class="buy-now btn">立即购买</div>
-            <div class="add-cart btn"><i class="fa fa-shopping-cart"></i>&nbsp;加入购物车</div>
+            <div class="add-cart btn" @click="addToCart"><i class="fa fa-shopping-cart"></i>&nbsp;加入购物车</div>
           </li>
         </ul>
       </div>
@@ -121,6 +121,7 @@
 import DetailHeader from '@/components/header/header.vue';
 import Search from '@/components/search/search.vue';
 import Service from '@/api';
+import { Message } from 'element-ui';
 export default {
   components: {
     DetailHeader,
@@ -133,18 +134,19 @@ export default {
       selectedSize: '',
       selectedNum: 1,
       selectedAttr: '',
-      collectTxt: '收藏商品',
       showType: 1
     };
   },
   created () {
     this.productId = this.$route.query.productId;
-    Service.get_product_detail({productId: this.productId}).then(data => {
-      this.productInfo = data;
-      console.log(this.productInfo);
-    });
+    this.getProductDetail();
   },
   methods: {
+    getProductDetail () {
+      Service.get_product_detail({productId: this.productId}).then(data => {
+        this.productInfo = data;
+      });
+    },
     handleMouseover () {
       this.$refs.floatBox.style.display = 'inline-block';
       this.$refs.bigPictureDetail.style.display = 'inline-block';
@@ -177,10 +179,12 @@ export default {
       img.style.left = -percentX * (img.offsetWidth - bigBox.offsetWidth) + 'px';
       img.style.top = -percentY * (img.offsetHeight - bigBox.offsetHeight) + 'px';
     },
-    showSmallPicture (host, src, name) {
-      this.$refs.bigImage.src = host + src;
-      this.$refs.detailImage.src = host + src;
-      this.selectedAttr = name;
+    showSmallPicture (url, name) {
+      this.$refs.bigImage.src = url;
+      this.$refs.detailImage.src = url;
+      if (name) {
+        this.selectedAttr = name;
+      }
       console.log(this.selectedAttr);
     },
     selectSize (size) {
@@ -197,7 +201,46 @@ export default {
       }
     },
     toggleCollect () {
-      this.collectTxt = this.collectTxt === '收藏商品' ? '取消收藏' : '收藏商品';
+      Service.toggle_collection_status({
+        productId: this.productId
+      }).then(() => {
+        Message.success({
+          message: this.productInfo.collectStatus === 1 ? '已取消收藏' : '收藏成功'
+        });
+        this.getProductDetail();
+      }).catch(res => {
+        Message.error({
+          message: res.errStr
+        });
+      });
+    },
+    addToCart () {
+      if (!this.selectedSize) {
+        Message.error({
+          message: '选择尺码信息才能加入购物车哦~'
+        });
+        return;
+      }
+      if (!this.selectedAttr) {
+        Message.error({
+          message: '选择属性后才能加入购物车哦~'
+        });
+        return;
+      }
+      Service.add_to_cart({
+        productId: this.productId,
+        num: this.selectedNum,
+        size: this.selectedSize,
+        attr: this.selectedAttr
+      }).then(() => {
+        Message.success({
+          message: '加入购物车成功啦~'
+        });
+      }).catch(res => {
+        Message.error({
+          message: res.errStr
+        });
+      });
     }
   }
 };
@@ -540,7 +583,7 @@ export default {
         border-top: none;
         box-sizing: border-box;
       .detail
-        padding: 10px 140px;
+        padding: 10px 94px;
         .title
           width: 80px;
           height: 35px;

@@ -15,6 +15,8 @@ import ModifyPassword from '@/pages/user-center/modify-password.vue';
 import ModifyPhone from '@/pages/user-center/modify-phone.vue';
 import ModifyEmail from '@/pages/user-center/modify-email.vue';
 import ModifyQuestion from '@/pages/user-center/modify-question.vue';
+import FootList from '@/pages/foot-list/foot-list.vue';
+import CollectionList from '@/pages/collection-list/collection-list.vue';
 Vue.use(Router);
 
 export default new Router({
@@ -84,6 +86,14 @@ export default new Router({
           component: UserAddress
         }
       ]
+    },
+    {
+      path: '/foot-list',
+      component: FootList
+    },
+    {
+      path: '/collection-list',
+      component: CollectionList
     }
   ]
 });

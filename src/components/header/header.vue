@@ -12,7 +12,7 @@
       <ul class="right-list">
         <li>购物车（{{cartNum}}）</li>
         <li @click="toUserCenter">个人中心</li>
-        <li>收藏夹</li>
+        <li @click="toCollectionList">收藏夹</li>
         <li>关于我们</li>
       </ul>
     </div>
@@ -62,6 +62,9 @@ export default {
     },
     toUserCenter () {
       this.userName ? this.$router.push('/user-center') : this.$router.push('/login');
+    },
+    toCollectionList () {
+      this.userName ? this.$router.push('/collection-list') : this.$router.push('/login');
     },
     ...mapMutations({
       'setUserName': 'SET_USER_NAME',

@@ -40,10 +40,10 @@
               <h2 class="title">我的足迹</h2>
             </li>
             <li class="menu">
-              <router-link :to="{path: '/user-center/collection'}">收藏</router-link>
+              <router-link to="/collection-list">收藏</router-link>
             </li>
             <li class="menu">
-              <router-link to="/user-center/foot">足迹</router-link>
+              <router-link to="/foot-list">足迹</router-link>
             </li>
             <li class="menu">
               <router-link to="/user-center/evaluation">评价</router-link>

@@ -13,7 +13,8 @@ let obj = {
     get_province_list: '/cities/get_province_list',
     get_cities_list: '/cities/get_cities_list',
     get_county_list: '/cities/get_county_list',
-    get_slider_pic: '/products/get_slider_pic'
+    get_slider_pic: '/products/get_slider_pic',
+    get_foot_list: '/users/get_foot_list'
   },
   post: {
     login: '/users/login',
@@ -37,7 +38,11 @@ let obj = {
     add_new_address: '/users/add_new_address',
     set_default_address: '/users/set_default_address',
     edit_address_info: '/users/edit_address_info',
-    delete_address: '/users/delete_address'
+    delete_address: '/users/delete_address',
+    delete_from_foot_list: '/users/delete_from_foot_list',
+    delete_from_collection_list: '/users/delete_from_collection_list',
+    toggle_collection_status: '/users/toggle_collection_status',
+    add_to_cart: '/users/add_to_cart'
   }
 };
 
