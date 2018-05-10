@@ -204,6 +204,8 @@ export default {
     getAddressList () {
       Service.get_address_list().then(data => {
         this.addressList = data;
+      }).then(() => {
+        this.selectedAddress(this.addressList[0], 0);
       }).catch(res => {
         Message.error({
           message: res.errStr

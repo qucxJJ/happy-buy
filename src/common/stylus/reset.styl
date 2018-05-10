@@ -65,3 +65,25 @@ input::-moz-placeholder, textarea::-moz-placeholder
 
 input:-ms-input-placeholder, textarea:-ms-input-placeholder
   color: #ccc;
+
+.dialog /deep/ .el-dialog
+  .el-dialog__header
+    border-bottom: 1px solid $color-theme;
+  .dialog-footer
+    span
+      display: inline-block;
+      width: 100px;
+      height: 40px;
+      line-height: 40px;
+      text-align: center;
+      font-size: $font-size-normal;
+      box-sizing: border-box;
+      border-radius: 3px;
+      vertical-align: top;
+      cursor: pointer;
+      &.cancel
+        color: $color-theme;
+        border: 1px solid $color-theme;
+      &.confirm
+        color: #fff;
+        background: $color-theme;

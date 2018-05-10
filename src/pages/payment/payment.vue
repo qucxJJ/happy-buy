@@ -6,15 +6,21 @@
         <h2 class="title">选择收货地址</h2>
         <address-model page="pay" @selected="selectAddress"></address-model>
       </div>
-      <div class="address-part">
+      <div class="express-part">
         <h2 class="title">选择物流方式</h2>
         <ul class="express-list">
-          <li v-for="(item, index) in expressList" :key="index" @click="selectExpress(item)">
-            <img :src="item.pic" alt="">{{item.expressName}}
+          <li
+            v-for="(item, index) in expressList"
+            :key="index"
+            @click="selectExpress(item)"
+            :class="{'active': selectedExpress.expressId === item.expressId}"
+            class="express-item">
+            <img :src="item.pic" alt=""><span class="name">{{item.expressName}}</span>
           </li>
         </ul>
       </div>
       <div class="product-part">
+        <h2 class="title">确认订单信息</h2>
         <table>
           <thead>
           <tr>
@@ -107,14 +113,22 @@ export default {
       this.selectedExpress = express;
     },
     submitOrder () {
+      if (!this.selectedExpress.expressId) {
+        Message.error({
+          message: '要选择快物流方式才能提交哦~'
+        });
+        return;
+      }
       Service.submit_order({
-        address: this.selectedAddress.addressId,
-        express: this.selectedExpress.expressId,
-        payList: this.payList.map(item => {
+        addressId: this.selectedAddress.addressId,
+        expressId: this.selectedExpress.expressId,
+        payListIds: this.payList.map(item => {
           return item.id;
         }),
-        userMsg: this.userMsg
+        userMsg: this.userMsg,
+        totalPrice: this.totalPrice
       }).then(() => {
+        this.$router.push('/pay-success');
       }).catch(res => {
         Message.error({
           message: res.errStr
@@ -150,6 +164,57 @@ export default {
   .main
     width: 1080px;
     margin: 0 auto
+  .title
+    height: 40px;
+    line-height: 40px;
+    font-size: $font-size-normal-x;
+    font-weight: bold;
+  .express-list
+    width: 100%;
+    margin-bottom: 30px;
+    .express-item
+      display: inline-block;
+      box-sizing: border-box;
+      width: 170px;
+      height: 48px;
+      margin-right: 10px;
+      padding: 5px;
+      border: 1px solid #fff;
+      &.active
+        border: 1px solid $color-theme;
+        position: relative;
+        &::after
+          content: "";
+          position: absolute;
+          right: 0;
+          bottom: 0;
+          display: inline-block;
+          width: 0;
+          height: 0;
+          border-right: 4px solid $color-theme;
+          border-bottom: 4px solid $color-theme;
+          border-top: 4px solid rgba(255,255,255,0);
+          border-left: 4px solid rgba(255,255,255,0);
+        &::before
+          content: "";
+          position: absolute;
+          right: 0;
+          bottom: 0;
+          display: inline-block;
+          width: 4px;
+          height: 4px;
+          border: 2px solid #fff;
+          border-bottom: none;
+          border-right: none;
+          z-index: 2;
+          transform: rotate(218deg);
+      .name
+        display: inline-block;
+        height: 36px;
+        line-height: 36px;
+        margin-left: 15px;
+        font-size: $font-size-normal;
+        vertical-align: top;
   .product-part
     table
       thead
@@ -257,4 +322,19 @@ export default {
           font-size: $font-size-large;
           font-weight: bold;
           color: $color-theme;
+    .btn-con
+      position: relative;
+      .button
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: 150px;
+        height: 50px;
+        line-height: 50px;
+        font-size: $font-size-normal-x;
+        font-weight: bold;
+        text-align: center;
+        color: #fff;
+        background: $color-theme;
+        cursor: pointer;
 </style>

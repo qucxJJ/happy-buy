@@ -19,6 +19,7 @@ import FootList from '@/pages/foot-list/foot-list.vue';
 import CollectionList from '@/pages/collection-list/collection-list.vue';
 import shopCart from '@/pages/shop-cart/shop-cart.vue';
 import Payment from '@/pages/payment/payment.vue';
+import PaySuccess from '@/pages/pay-success/pay-success.vue';
 Vue.use(Router);
 
 export default new Router({
@@ -104,6 +105,10 @@ export default new Router({
     {
       path: '/payment',
       component: Payment
+    },
+    {
+      path: '/pay-success',
+      component: PaySuccess
     }
   ]
 });
