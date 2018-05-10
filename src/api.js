@@ -14,7 +14,9 @@ let obj = {
     get_cities_list: '/cities/get_cities_list',
     get_county_list: '/cities/get_county_list',
     get_slider_pic: '/products/get_slider_pic',
-    get_foot_list: '/users/get_foot_list'
+    get_foot_list: '/users/get_foot_list',
+    get_cart_list: '/users/get_cart_list',
+    get_express_list: '/express/get_express_list'
   },
   post: {
     login: '/users/login',
@@ -42,7 +44,10 @@ let obj = {
     delete_from_foot_list: '/users/delete_from_foot_list',
     delete_from_collection_list: '/users/delete_from_collection_list',
     toggle_collection_status: '/users/toggle_collection_status',
-    add_to_cart: '/users/add_to_cart'
+    add_to_cart: '/users/add_to_cart',
+    modify_cart_product_num: '/users/modify_cart_product_num',
+    delete_from_cart: '/users/delete_from_cart',
+    submit_order: '/orders/submit_order'
   }
 };
 

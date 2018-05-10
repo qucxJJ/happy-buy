@@ -5,3 +5,5 @@ export const cartNum = state => state.cartNum;
 export const avatar = state => state.avatar;
 
 export const isLogin = state => state.isLogin;
+
+export const payList = state => state.payList;

@@ -10,7 +10,7 @@
         @delete="showDialogConfirm"
         type="myinfo"></list-show>
     </div>
-    <el-dialog title="删除收货地址" :visible.sync="dialogConfirmVisible" class="dialog">
+    <el-dialog title="删除收藏夹商品" :visible.sync="dialogConfirmVisible" class="dialog">
       确认删除这条足迹信息吗？删除之后找起来很麻烦哦~
       <div slot="footer" class="dialog-footer">
         <span @click="dialogConfirmVisible = false" class="cancel">取 消</span>
@@ -52,7 +52,7 @@ export default {
   },
   methods: {
     getCollectionList () {
-      Service.get_foot_list().then(data => {
+      Service.get_collection_list().then(data => {
         this.collectionList = data;
       }).catch(res => {
         Message.error({

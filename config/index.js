@@ -34,6 +34,9 @@ module.exports = {
       },
       '/cities': {
         target: 'http://localhost:3000'
+      },
+      '/express': {
+        target: 'http://localhost:3000'
       }
     },
 

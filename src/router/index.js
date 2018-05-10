@@ -17,6 +17,8 @@ import ModifyEmail from '@/pages/user-center/modify-email.vue';
 import ModifyQuestion from '@/pages/user-center/modify-question.vue';
 import FootList from '@/pages/foot-list/foot-list.vue';
 import CollectionList from '@/pages/collection-list/collection-list.vue';
+import shopCart from '@/pages/shop-cart/shop-cart.vue';
+import Payment from '@/pages/payment/payment.vue';
 Vue.use(Router);
 
 export default new Router({
@@ -94,6 +96,14 @@ export default new Router({
     {
       path: '/collection-list',
       component: CollectionList
+    },
+    {
+      path: '/shop-cart',
+      component: shopCart
+    },
+    {
+      path: '/payment',
+      component: Payment
     }
   ]
 });

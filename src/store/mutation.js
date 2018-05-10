@@ -12,6 +12,9 @@ const mutations = {
   },
   [types.SET_IS_LOGIN] (state, isLogin) {
     state.isLogin = isLogin;
+  },
+  [types.SET_PAY_LIST] (state, payList) {
+    state.payList = payList;
   }
 };
 
