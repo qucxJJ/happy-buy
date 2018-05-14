@@ -18,8 +18,10 @@ import ModifyQuestion from '@/pages/user-center/modify-question.vue';
 import FootList from '@/pages/foot-list/foot-list.vue';
 import CollectionList from '@/pages/collection-list/collection-list.vue';
 import shopCart from '@/pages/shop-cart/shop-cart.vue';
-import Payment from '@/pages/payment/payment.vue';
+import OrderConfirm from '@/pages/order-confirm/order-confirm.vue';
 import PaySuccess from '@/pages/pay-success/pay-success.vue';
+import OrderList from '@/pages/user-center/order-list.vue';
+import OrderDetail from '@/pages/order-detail/order-detail.vue';
 Vue.use(Router);
 
 export default new Router({
@@ -87,6 +89,10 @@ export default new Router({
         {
           path: 'address',
           component: UserAddress
+        },
+        {
+          path: 'order-list',
+          component: OrderList
         }
       ]
     },
@@ -103,12 +109,16 @@ export default new Router({
       component: shopCart
     },
     {
-      path: '/payment',
-      component: Payment
+      path: '/order-confirm',
+      component: OrderConfirm
     },
     {
       path: '/pay-success',
       component: PaySuccess
+    },
+    {
+      path: '/order-detail',
+      component: OrderDetail
     }
   ]
 });

@@ -143,7 +143,6 @@ export default {
           }
         });
       }
-      console.log(ids);
       Service.delete_from_cart({
         ids
       }).then(() => {
@@ -166,7 +165,7 @@ export default {
         }
       });
       this.setPayList(payList);
-      this.$router.push('/payment');
+      this.$router.push('/order-confirm');
     },
     ...mapMutations({
       setPayList: 'SET_PAY_LIST'

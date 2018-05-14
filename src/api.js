@@ -16,7 +16,9 @@ let obj = {
     get_slider_pic: '/products/get_slider_pic',
     get_foot_list: '/users/get_foot_list',
     get_cart_list: '/users/get_cart_list',
-    get_express_list: '/express/get_express_list'
+    get_express_list: '/express/get_express_list',
+    get_order_list: '/orders/get_order_list',
+    get_product_eval: '/evals/get_product_eval'
   },
   post: {
     login: '/users/login',
@@ -47,7 +49,12 @@ let obj = {
     add_to_cart: '/users/add_to_cart',
     modify_cart_product_num: '/users/modify_cart_product_num',
     delete_from_cart: '/users/delete_from_cart',
-    submit_order: '/orders/submit_order'
+    submit_order: '/orders/submit_order',
+    get_order_detail: '/orders/get_order_detail',
+    pay_order: '/orders/pay_order',
+    cancel_order: '/orders/cancel_order',
+    received_order: '/orders/received_order',
+    submit_eval: '/evals/submit_eval'
   }
 };
 

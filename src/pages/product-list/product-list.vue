@@ -112,7 +112,6 @@ export default {
       }).then(data => {
         this.productData = data.list;
         this.totalNum = data.totalNum;
-        console.log(this.productData);
       });
     }
   },
@@ -161,6 +160,7 @@ export default {
           width: 100px;
           font-size: 0;
           line-height: 20px;
+          z-index: 3;
           span
             box-sizing: border-box;
             display: inline-block;

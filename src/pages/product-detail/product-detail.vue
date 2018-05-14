@@ -84,15 +84,15 @@
             {{productInfo.collectStatus === 1 ? '取消收藏' : '收藏'}}
           </li>
           <li class="btn-con">
-            <div class="buy-now btn">立即购买</div>
-            <div class="add-cart btn" @click="addToCart"><i class="fa fa-shopping-cart"></i>&nbsp;加入购物车</div>
+            <div class="buy-now btn" :class="{'disable': productInfo.stockNum <= 0}">立即购买</div>
+            <div class="add-cart btn" @click="addToCart" :class="{'disabled': productInfo.stockNum <= 0}"><i class="fa fa-shopping-cart"></i>&nbsp;加入购物车</div>
           </li>
         </ul>
       </div>
       <div class="bottom">
         <div class="tab-btn-container">
           <div class="tab" :class="{'cur': showType === 1}" @click="showType = 1">商品详情</div>
-          <div class="tab" :class="{'cur': showType === 2}" @click="showType = 2">累计评价{{productInfo.evaluationNum}}</div>
+          <div class="tab" :class="{'cur': showType === 2}" @click="getEvals">累计评价{{productInfo.evaluationNum}}</div>
           <div class="tab" :class="{'cur': showType === 3}" @click="showType = 3">猜你喜欢</div>
         </div>
         <div class="tab-content detail" v-show="showType === 1">
@@ -107,7 +107,36 @@
           <div class="detail-info" v-html="productInfo.detail"></div>
         </div>
         <div class="tab-content evaluation" v-show="showType === 2">
-          评价
+          <div class="eval-tab">
+            <div class="good-rate">
+              <span>{{rates.goodRate}}%</span>好评率
+            </div>
+            <ul class="tab-con">
+              <li :class="{'cur': evalType === 0}">全部评价（{{rates.total}}）</li>
+              <li :class="{'cur': evalType === 1}">好评（{{rates.good}}）</li>
+              <li :class="{'cur': evalType === 2}">中评（{{rates.middle}}）</li>
+              <li :class="{'cur': evalType === 3}">差评（{{rates.bad}}）</li>
+            </ul>
+          </div>
+          <div class="eval-content">
+            <ul>
+              <li v-for="(item, index) in evals" :key="index" class="eval-item">
+                <img :src="item.avatar" alt="" class="avatar">
+                <div class="content">
+                  <div class="title">{{item.userName}}&nbsp;&nbsp;&nbsp;({{evalTypeTxt[item.type - 1].txt}})&nbsp;&nbsp;&nbsp;&nbsp;评论于{{getDate(item.createTime)}}</div>
+                  <div class="text">
+                    <p class="txt">
+                      {{item.content}}
+                    </p>
+                    <ul class="pics" v-if="item.pics.length">
+                      <li v-for="(pic, index1) in item.pics" :key="index1"><img :src="pic" alt=""></li>
+                    </ul>
+                  </div>
+                  <div class="product-info">颜色分类：{{item.attr}} 尺码：{{item.size}}</div>
+                </div>
+              </li>
+            </ul>
+          </div>
         </div>
         <div class="tab-content recommend" v-show="showType === 3">
           猜你喜欢
@@ -134,7 +163,26 @@ export default {
       selectedSize: '',
       selectedNum: 1,
       selectedAttr: '',
-      showType: 1
+      showType: 1,
+      evalType: 0,
+      evals: [],
+      rates: {
+        good: '',
+        middle: '',
+        bad: '',
+        total: '',
+        goodRate: ''
+      },
+      evalTypeTxt: [{
+        value: 1,
+        txt: '好评'
+      }, {
+        value: 2,
+        txt: '中评'
+      }, {
+        value: 3,
+        txt: '差评'
+      }],
     };
   },
   created () {
@@ -142,6 +190,24 @@ export default {
     this.getProductDetail();
   },
   methods: {
+    getEvals () {
+      this.showType = 2;
+      Service.get_product_eval({
+        type: this.evalType,
+        productId: this.productId
+      }).then(data => {
+        this.evals = data.list;
+        this.rates.good = data.goodNum;
+        this.rates.middle = data.middleNum;
+        this.rates.bad = data.badNum;
+        this.rates.goodRate = parseInt((data.goodNum / data.totalNum) * 100);
+        this.rates.total = data.totalNum;
+      }).catch(res => {
+        Message.error({
+          message: res.errStr
+        });
+      });
+    },
     getProductDetail () {
       Service.get_product_detail({productId: this.productId}).then(data => {
         this.productInfo = data;
@@ -227,6 +293,12 @@ export default {
         });
         return;
       }
+      if (this.productInfo.stockNum <= 0) {
+        Message.error({
+          message: '这件商品库存不足哦~'
+        });
+        return;
+      }
       Service.add_to_cart({
         productId: this.productId,
         num: this.selectedNum,
@@ -241,6 +313,16 @@ export default {
           message: res.errStr
         });
       });
+    },
+    getDate (time) {
+      let date = new Date(time);
+      let year = date.getFullYear();
+      let month = date.getMonth() + 1 + '';
+      let day = date.getDate() + '';
+      let hour = date.getHours() + '';
+      let minutes = date.getMinutes() + '';
+      let seconds = date.getSeconds() + '';
+      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')} ${hour.padStart(2, '0')}:${minutes.padStart(2, '0')}:${seconds.padStart(2, '0')}`;
     }
   }
 };
@@ -515,6 +597,8 @@ export default {
             font-size: $font-size-normal-x;
             text-align: center;
             cursor: pointer;
+            &.disabled
+              cursor: not-allowed;
           .buy-now
             border: 1px solid $color-theme;
             background: #ffeded;
@@ -524,7 +608,6 @@ export default {
             border: 1px solid $color-theme;
             background: $color-theme;
             color: #fff;
-
     .bottom
       width: 100%;
       margin-top: 30px;
@@ -603,4 +686,91 @@ export default {
         .detail-info
           margin-top: 10px;
           text-aign: center;
+      .evaluation
+        padding: 10px 100px;
+        .eval-tab
+          height: 100px;
+          padding: 10px;
+          box-sizing: border-box;
+          border-bottom: 1px solid $color-theme;
+          .good-rate
+            width: 150px;
+            height: 100px;
+            display: inline-block;
+            text-align: center;
+            line-height: 30px;
+            color: $color-theme
+            font-weight: bold;
+            font-size: $font-size-large;
+            span
+              display: inline-block;
+              width: 100%;
+              line-height: 50px;
+              font-size: 40px;
+              font-weight: bold;
+              color: $color-theme;
+          .tab-con
+            vertical-align: top;
+            display: inline-block;
+            width: 500px;
+            height: 100%;
+            line-height: 100%;
+            box-sizing: border-box;
+            padding: 20px 0;
+            li
+              display: inline-block;
+              width: 120px;
+              height: 30px;
+              line-height: 30px;
+              text-align: center;
+              font-size: $font-size-normal;
+              cursor: pointer;
+              &.cur
+                color: #fff;
+                background: $color-theme
+                border-radius: 5px;
+        .eval-content
+          .eval-item
+            margin: 15px 0;
+            .avatar
+              display: inline-block;
+              width: 50px;
+              height: 50px;
+              margin-top: 10px;
+              vertical-align: top;
+            .content
+              box-sizing: border-box;
+              display: inline-block;
+              width: 800px;
+              margin-left: 23px;
+              border: 1px solid $color-border;
+              .title
+                height: 35px;
+                line-height: 35px;
+                width: 100%;
+                border-bottom: 1px solid $color-border;
+                background: #eee;
+                font-size: $font-size-normal;
+                padding-left: 10px
+              .text
+                padding: 15px;
+                .txt
+                  line-height: 20px;
+                .pics
+                  display: inline-block;
+                  width: 100%;
+                  li
+                    display: line-block;
+                    width: 50px;
+                    height: 50px;
+                    margin-right: 5px;
+                    img
+                      width: 100%;
+                      height: 100%;
+              .product-info
+                font-size: $font-size-normal;
+                line-height: 30px;
+                padding-left: 15px;
+                color: #999;
+
 </style>

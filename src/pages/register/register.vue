@@ -274,7 +274,7 @@ export default {
       margin: 0 auto;
       .form-item
         height: 80px;
-        margin-bottom: 30px;
+        margin-bottom: 5px;
         font-size: 0;
         label
           display: inline-block;

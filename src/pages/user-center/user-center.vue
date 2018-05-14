@@ -30,7 +30,7 @@
               <h2 class="title">我的交易</h2>
             </li>
             <li class="menu">
-              <router-link to="/user-center/order">订单管理</router-link>
+              <router-link to="/user-center/order-list">订单管理</router-link>
             </li>
           </ul>
         </li>

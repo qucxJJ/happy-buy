@@ -37,7 +37,11 @@ module.exports = {
       },
       '/express': {
         target: 'http://localhost:3000'
+      },
+      '/evals': {
+        target: 'http://localhost:3000'
       }
+
     },
 
     // Various Dev Server settings

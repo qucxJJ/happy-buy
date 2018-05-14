@@ -10,7 +10,7 @@
         <span class="btn" @click="logout">退出</span>
       </div>
       <ul class="right-list">
-        <li>购物车（{{cartNum}}）</li>
+        <li @click="toShopCart">购物车（{{cartNum}}）</li>
         <li @click="toUserCenter">个人中心</li>
         <li @click="toCollectionList">收藏夹</li>
         <li>关于我们</li>
@@ -65,6 +65,9 @@ export default {
     },
     toCollectionList () {
       this.userName ? this.$router.push('/collection-list') : this.$router.push('/login');
+    },
+    toShopCart () {
+      this.userName ? this.$router.push('/shop-cart') : this.$router.push('/login');
     },
     ...mapMutations({
       'setUserName': 'SET_USER_NAME',

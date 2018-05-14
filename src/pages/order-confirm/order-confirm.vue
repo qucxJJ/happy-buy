@@ -128,7 +128,7 @@ export default {
         userMsg: this.userMsg,
         totalPrice: this.totalPrice
       }).then(() => {
-        this.$router.push('/pay-success');
+        this.$router.push('/pay-success?type=order-confirm');
       }).catch(res => {
         Message.error({
           message: res.errStr
@@ -324,6 +324,9 @@ export default {
           color: $color-theme;
     .btn-con
       position: relative;
+      width: 100%;
+      height: 50px;
+      margin-bottom: 30px;
       .button
         position: absolute;
         right: 0;
