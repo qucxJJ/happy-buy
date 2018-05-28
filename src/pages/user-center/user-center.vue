@@ -46,7 +46,7 @@
               <router-link to="/foot-list">足迹</router-link>
             </li>
             <li class="menu">
-              <router-link to="/user-center/evaluation">评价</router-link>
+              <router-link to="/user-center/eval-list">评价</router-link>
             </li>
           </ul>
         </li>

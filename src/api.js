@@ -18,7 +18,8 @@ let obj = {
     get_cart_list: '/users/get_cart_list',
     get_express_list: '/express/get_express_list',
     get_order_list: '/orders/get_order_list',
-    get_product_eval: '/evals/get_product_eval'
+    get_product_eval: '/evals/get_product_eval',
+    get_user_eval: '/evals/get_user_eval'
   },
   post: {
     login: '/users/login',

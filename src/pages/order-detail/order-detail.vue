@@ -13,6 +13,10 @@
             <label>订单编号</label>
             <span>{{order.orderNumber}}</span>
           </li>
+          <li v-if="order.expressNumber">
+            <label>快递单号</label>
+            <span>{{order.expressNumber}}</span>
+          </li>
           <li>
             <label>订单状态</label>
             <span>{{orderStatus[order.status - 1]}}</span>
@@ -60,7 +64,7 @@
             <th>单价</th>
             <th>数量</th>
             <th>金额</th>
-            <th v-if="order.isEvalAll === 0">操作</th>
+            <th v-if="order.status === 4 && order.isEvalAll === 0">操作</th>
           </tr>
           </thead>
           <tbody>
@@ -84,7 +88,7 @@
             <td>
               <span class="total-price">￥{{item.totalPrice}}</span>
             </td>
-            <td v-if="order.isEvalAll === 0">
+            <td v-if="order.status === 4 && order.isEvalAll === 0">
               <span class="btn" v-if="item.isEval === 1">已评价</span>
               <span class="btn" v-if="item.isEval === 0" @click="toEvaluate(item)">评价</span>
             </td>
@@ -184,16 +188,20 @@ export default {
       payConfirmVisible: false,
       cancelConfirmVisible: false,
       receivedConfirmVisible: false,
-      evalType: [{
-        value: 1,
-        txt: '好评'
-      }, {
-        value: 2,
-        txt: '中评'
-      }, {
-        value: 3,
-        txt: '差评'
-      }],
+      evalType: [
+        {
+          value: 1,
+          txt: '好评'
+        },
+        {
+          value: 2,
+          txt: '中评'
+        },
+        {
+          value: 3,
+          txt: '差评'
+        }
+      ],
       uploadAction: config.uploadEvalUrl,
       detailDialogImageUrl: '',
       detailPicDialogVisible: false,
@@ -225,17 +233,19 @@ export default {
         num: this.evalProduct.num,
         pic: this.evalProduct.pic.split('/')[5]
       };
-      Service.submit_eval(tempObj).then(() => {
-        Message.success({
-          message: '评价成功啦~'
+      Service.submit_eval(tempObj)
+        .then(() => {
+          Message.success({
+            message: '评价成功啦~'
+          });
+          this.dialogFormVisible = false;
+          this.getOrderDetail(this.order.orderNumber);
+        })
+        .catch(res => {
+          Message.error({
+            message: res.errStr
+          });
         });
-        this.dialogFormVisible = false;
-        this.getOrderDetail(this.order.orderNumber);
-      }).catch(res => {
-        Message.error({
-          message: res.errStr
-        });
-      });
     },
     toEvaluate (item) {
       this.evalProduct = item;
@@ -256,17 +266,19 @@ export default {
     receivedOrder () {
       Service.received_order({
         orderNumber: this.order.orderNumber
-      }).then(() => {
-        Message.success({
-          message: '收获成功啦~快去评价吧'
+      })
+        .then(() => {
+          Message.success({
+            message: '收获成功啦~快去评价吧'
+          });
+          this.receivedConfirmVisible = false;
+          this.getOrderDetail(this.order.orderNumber);
+        })
+        .catch(res => {
+          Message.error({
+            message: res.errStr
+          });
         });
-        this.receivedConfirmVisible = false;
-        this.getOrderDetail(this.order.orderNumber);
-      }).catch(res => {
-        Message.error({
-          message: res.errStr
-        });
-      });
     },
     showReceivedDialog () {
       this.receivedConfirmVisible = true;
@@ -274,17 +286,19 @@ export default {
     cancelOrder () {
       Service.cancel_order({
         orderNumber: this.order.orderNumber
-      }).then(() => {
-        Message.success({
-          message: '订单取消成功'
+      })
+        .then(() => {
+          Message.success({
+            message: '订单取消成功'
+          });
+          this.cancelConfirmVisible = false;
+          this.getOrderDetail(this.order.orderNumber);
+        })
+        .catch(res => {
+          Message.error({
+            message: res.errStr
+          });
         });
-        this.cancelConfirmVisible = false;
-        this.getOrderDetail(this.order.orderNumber);
-      }).catch(res => {
-        Message.error({
-          message: res.errStr
-        });
-      });
     },
     showCancelDialog () {
       this.cancelConfirmVisible = true;
@@ -292,17 +306,19 @@ export default {
     payNow () {
       Service.pay_order({
         orderNumber: this.order.orderNumber
-      }).then(() => {
-        Message.success({
-          message: '付款成功啦~'
+      })
+        .then(() => {
+          Message.success({
+            message: '付款成功啦~'
+          });
+          this.payConfirmVisible = false;
+          this.getOrderDetail(this.order.orderNumber);
+        })
+        .catch(res => {
+          Message.error({
+            message: res.errStr
+          });
         });
-        this.payConfirmVisible = false;
-        this.getOrderDetail(this.order.orderNumber);
-      }).catch(res => {
-        Message.error({
-          message: res.errStr
-        });
-      });
     },
     showPayDialog () {
       this.payConfirmVisible = true;
@@ -329,7 +345,13 @@ export default {
       let hour = date.getHours() + '';
       let minutes = date.getMinutes() + '';
       let seconds = date.getSeconds() + '';
-      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')} ${hour.padStart(2, '0')}:${minutes.padStart(2, '0')}:${seconds.padStart(2, '0')}`;
+      return `${year}-${month.padStart(2, '0')}-${day.padStart(
+        2,
+        '0'
+      )} ${hour.padStart(2, '0')}:${minutes.padStart(
+        2,
+        '0'
+      )}:${seconds.padStart(2, '0')}`;
     }
   }
 };
@@ -337,15 +359,19 @@ export default {
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
 @import '~@/common/stylus/variable.styl';
-.order-detail
-  .main
+
+.order-detail {
+  .main {
     width: 1080px;
     margin: 0 auto;
-    .top
+
+    .top {
       margin-top: 40px;
-      li
+
+      li {
         line-height: 40px;
-        .btn
+
+        .btn {
           display: inline-block;
           width: 120px;
           height: 40px;
@@ -357,43 +383,63 @@ export default {
           font-weighr: bold;
           cursor: pointer;
           margin-left: 20px;
-        label
+        }
+
+        label {
           display: inline-block;
           width: 120px;
           text-align: right;
           font-size: $font-size-normal;
           margin-right: 20px;
           font-weight: bold;
-        span
+        }
+
+        span {
           display: inline-block;
           font-size: $font-size-normal;
-        ul
+        }
+
+        ul {
           display: inline-block;
           font-size: $font-size-normal;
           vertical-align: top;
-    .table-con
-      table
+        }
+      }
+    }
+
+    .table-con {
+      table {
         width: 100%;
         margin-top: 20px;
         border-bottom: 1px solid #ccc;
-        thead
-          tr
+
+        thead {
+          tr {
             height: 40px;
             line-height: 40px;
             background: #666;
             color: #fff;
-            th
+
+            th {
               font-size: $font-size-normal;
-        tbody
-          tr
+            }
+          }
+        }
+
+        tbody {
+          tr {
             border-bottom: 1px solid $color-border;
-            td
+
+            td {
               padding: 10px 0;
               font-size: 0;
-              img
+
+              img {
                 width: 80px;
                 height: 80px;
-              .name
+              }
+
+              .name {
                 display: inline-block;
                 width: 250px;
                 text-align: left;
@@ -404,18 +450,24 @@ export default {
                 line-height: 20px;
                 color: #333;
                 cursor: pointer;
-              .con
+              }
+
+              .con {
                 display: inline-block;
                 vertical-align: top;
                 padding-top: 10px;
-                .info
+
+                .info {
                   vertical-align: top;
                   display: inline-block;
                   line-height: 25px;
                   width: 100%;
                   font-size: $font-size-normal;
                   color: #ccc;
-              .price
+                }
+              }
+
+              .price {
                 margin-top: 20px;
                 vertical-align: top;
                 display: inline-block;
@@ -423,7 +475,9 @@ export default {
                 font-size: $font-size-normal;
                 text-align: center;
                 font-weight: bold;
-              .num
+              }
+
+              .num {
                 margin-top: 15px;
                 box-sizing: border-box;
                 width: 50px;
@@ -432,7 +486,9 @@ export default {
                 vertical-align: top;
                 font-size: $font-size-small;
                 text-align: center;
-              .total-price
+              }
+
+              .total-price {
                 display: inline-block;
                 margin-top: 15px;
                 vertical-align: top;
@@ -442,7 +498,9 @@ export default {
                 height: 20px;
                 line-height: 20px;
                 text-align: center;
-              .btn
+              }
+
+              .btn {
                 display: inline-block;
                 vertical-align: top;
                 width: 100%;
@@ -452,38 +510,70 @@ export default {
                 color: $color-theme;
                 text-align: center;
                 cursor: pointer;
-              .msg-con
+              }
+
+              .msg-con {
                 text-align: left;
                 padding-left: 20px;
                 font-size: $font-size-normal;
-                label, span
+
+                label, span {
                   display: inline-block;
                   height: 25px;
                   line-height: 25px;
-        td, th
+                }
+              }
+            }
+          }
+        }
+
+        td, th {
           text-align: center;
-          &:nth-child(1)
+
+          &:nth-child(1) {
             width: 45%;
-          &:nth-child(2)
+          }
+
+          &:nth-child(2) {
             width: 20%;
-          &:nth-child(3)
+          }
+
+          &:nth-child(3) {
             width: 10%;
-          &:nth-child(4)
+          }
+
+          &:nth-child(4) {
             width: 10%;
-          &:nth-child(5)
+          }
+
+          &:nth-child(5) {
             width: 10%;
-          &:nth-child(6)
+          }
+
+          &:nth-child(6) {
             width: 5%;
-        td
+          }
+        }
+
+        td {
           border: 1px solid #ccc;
-  .dialog /deep/ .el-dialog
-    .el-dialog__header
+        }
+      }
+    }
+  }
+
+  .dialog /deep/ .el-dialog {
+    .el-dialog__header {
       border-bottom: 1px solid $color-theme;
-    .main
+    }
+
+    .main {
       padding: 15px 20px;
-      .form-item
+
+      .form-item {
         margin-bottom: 10px;
-        .label
+
+        .label {
           display: inline-block;
           width: 100px;
           height: 40px;
@@ -492,19 +582,29 @@ export default {
           text-align: right;
           margin-right: 20px;
           vertical-align: top;
-        .right
+        }
+
+        .right {
           display: inline-block;
           height: 40px;
           line-height: 40px;
           font-size: $font-size-normal;
-        textarea
+        }
+
+        textarea {
           width: 500px;
           height: 70px;
-        .upload-pic
+        }
+
+        .upload-pic {
           display: inline-block;
           width: 600px;
-    .dialog-footer
-      span
+        }
+      }
+    }
+
+    .dialog-footer {
+      span {
         display: inline-block;
         width: 100px;
         height: 40px;
@@ -515,10 +615,18 @@ export default {
         border-radius: 3px;
         vertical-align: top;
         cursor: pointer;
-        &.cancel
+
+        &.cancel {
           color: $color-theme;
           border: 1px solid $color-theme;
-        &.confirm
+        }
+
+        &.confirm {
           color: #fff;
           background: $color-theme;
+        }
+      }
+    }
+  }
+}
 </style>

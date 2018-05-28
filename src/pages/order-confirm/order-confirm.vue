@@ -119,15 +119,24 @@ export default {
         });
         return;
       }
-      Service.submit_order({
+      console.log(this.payList.map(item => {
+        return item.id;
+      }));
+      let tempObj = {
         addressId: this.selectedAddress.addressId,
         expressId: this.selectedExpress.expressId,
-        payListIds: this.payList.map(item => {
-          return item.id;
-        }),
         userMsg: this.userMsg,
         totalPrice: this.totalPrice
-      }).then(() => {
+      };
+      let ids = this.payList.map(item => {
+        return item.id;
+      });
+      if (ids[0]) {
+        tempObj.payListIds = ids;
+      } else {
+        tempObj.productInfo = this.payList[0];
+      }
+      Service.submit_order(tempObj).then(() => {
         this.$router.push('/pay-success?type=order-confirm');
       }).catch(res => {
         Message.error({

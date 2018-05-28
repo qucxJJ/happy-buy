@@ -64,7 +64,7 @@
               <router-link tag="span" :to="'/order-detail?orderNumber=' + order.orderNumber" class="btn" v-if="order.status === 1">立即付款</router-link>
               <span class="btn" v-if="order.status === 1">取消订单</span>
               <span class="btn" v-if="order.status === 3">确认收货</span>
-              <router-link tag="span" :to="'/evaluate-order?orderNumber=' + order.orderNumber" class="btn" v-if="order.isEvalAll === 0">去评价</router-link>
+              <router-link tag="span" :to="'/evaluate-order?orderNumber=' + order.orderNumber" class="btn" v-if="order.status === 4 && order.isEvalAll === 0">去评价</router-link>
             </td>
           </tr>
           <tr v-if="order.userMsg">

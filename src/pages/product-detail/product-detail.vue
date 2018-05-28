@@ -84,7 +84,7 @@
             {{productInfo.collectStatus === 1 ? '取消收藏' : '收藏'}}
           </li>
           <li class="btn-con">
-            <div class="buy-now btn" :class="{'disable': productInfo.stockNum <= 0}">立即购买</div>
+            <div class="buy-now btn" :class="{'disable': productInfo.stockNum <= 0}" @click="toPayment">立即购买</div>
             <div class="add-cart btn" @click="addToCart" :class="{'disabled': productInfo.stockNum <= 0}"><i class="fa fa-shopping-cart"></i>&nbsp;加入购物车</div>
           </li>
         </ul>
@@ -151,6 +151,7 @@ import DetailHeader from '@/components/header/header.vue';
 import Search from '@/components/search/search.vue';
 import Service from '@/api';
 import { Message } from 'element-ui';
+import { mapMutations, mapGetters } from 'vuex';
 export default {
   components: {
     DetailHeader,
@@ -163,6 +164,7 @@ export default {
       selectedSize: '',
       selectedNum: 1,
       selectedAttr: '',
+      selectedAttrPic: '',
       showType: 1,
       evalType: 0,
       evals: [],
@@ -182,7 +184,7 @@ export default {
       }, {
         value: 3,
         txt: '差评'
-      }],
+      }]
     };
   },
   created () {
@@ -250,6 +252,7 @@ export default {
       this.$refs.detailImage.src = url;
       if (name) {
         this.selectedAttr = name;
+        this.selectedAttrPic = url;
       }
       console.log(this.selectedAttr);
     },
@@ -309,9 +312,13 @@ export default {
           message: '加入购物车成功啦~'
         });
       }).catch(res => {
-        Message.error({
-          message: res.errStr
-        });
+        if (res.errNo === 11) {
+          this.$router.push('/login');
+        } else {
+          Message.error({
+            message: res.errStr
+          });
+        }
       });
     },
     getDate (time) {
@@ -323,7 +330,51 @@ export default {
       let minutes = date.getMinutes() + '';
       let seconds = date.getSeconds() + '';
       return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')} ${hour.padStart(2, '0')}:${minutes.padStart(2, '0')}:${seconds.padStart(2, '0')}`;
-    }
+    },
+    toPayment () {
+      if (!this.selectedSize) {
+        Message.error({
+          message: '选择尺码信息才能加购买哦~'
+        });
+        return;
+      }
+      if (!this.selectedAttr) {
+        Message.error({
+          message: '选择属性后才能购买哦~'
+        });
+        return;
+      }
+      if (this.productInfo.stockNum <= 0) {
+        Message.error({
+          message: '这件商品库存不足哦~'
+        });
+        return;
+      }
+      if (!this.userName) {
+        this.$router.push('/login');
+        return;
+      }
+      let payList = [{
+        productId: this.productId,
+        productName: this.productInfo.productName,
+        price: this.productInfo.price,
+        pic: this.selectedAttrPic,
+        totalPrice: this.selectedNum * Number(this.productInfo.price),
+        num: this.selectedNum,
+        size: this.selectedSize,
+        attr: this.selectedAttr
+      }];
+      this.setPayList(payList);
+      this.$router.push('/order-confirm');
+    },
+    ...mapMutations({
+      setPayList: 'SET_PAY_LIST'
+    })
+  },
+  computed: {
+    ...mapGetters([
+      'userName'
+    ])
   }
 };
 </script>

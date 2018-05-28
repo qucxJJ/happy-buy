@@ -17,11 +17,12 @@ import ModifyEmail from '@/pages/user-center/modify-email.vue';
 import ModifyQuestion from '@/pages/user-center/modify-question.vue';
 import FootList from '@/pages/foot-list/foot-list.vue';
 import CollectionList from '@/pages/collection-list/collection-list.vue';
-import shopCart from '@/pages/shop-cart/shop-cart.vue';
+import ShopCart from '@/pages/shop-cart/shop-cart.vue';
 import OrderConfirm from '@/pages/order-confirm/order-confirm.vue';
 import PaySuccess from '@/pages/pay-success/pay-success.vue';
 import OrderList from '@/pages/user-center/order-list.vue';
 import OrderDetail from '@/pages/order-detail/order-detail.vue';
+import EvalList from '@/pages/user-center/eval-list.vue';
 Vue.use(Router);
 
 export default new Router({
@@ -93,6 +94,10 @@ export default new Router({
         {
           path: 'order-list',
           component: OrderList
+        },
+        {
+          path: 'eval-list',
+          component: EvalList
         }
       ]
     },
@@ -106,7 +111,7 @@ export default new Router({
     },
     {
       path: '/shop-cart',
-      component: shopCart
+      component: ShopCart
     },
     {
       path: '/order-confirm',
