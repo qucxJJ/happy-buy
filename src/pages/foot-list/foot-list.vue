@@ -1,7 +1,5 @@
 <template>
   <div class="foot-list">
-    <detail-header></detail-header>
-    <search></search>
     <breadcrumb :tags="breadData"></breadcrumb>
     <div class="main">
       <list-show
@@ -21,16 +19,12 @@
 </template>
 
 <script type="text/ecmascript-6">
-import DetailHeader from '@/components/header/header.vue';
-import Search from '@/components/search/search.vue';
 import Breadcrumb from '@/components/Breadcrumb/breadcrumb.vue';
 import ListShow from '@/components/list-show/list-show.vue';
 import Service from '@/api';
 import { Message } from 'element-ui';
 export default {
   components: {
-    DetailHeader,
-    Search,
     Breadcrumb,
     ListShow
   },

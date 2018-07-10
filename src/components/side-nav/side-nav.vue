@@ -54,6 +54,7 @@ export default {
       });
     },
     toProductList (keyword) {
+      this.$root.eventHub.$emit('keyword', keyword);
       this.$router.push(`/product-list?keyword=${keyword}`);
     }
   }

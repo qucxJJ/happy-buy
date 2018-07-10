@@ -1,6 +1,6 @@
 <template>
   <div class="list-show">
-    <ul class="list-con">
+    <ul class="list-con" v-if="productData.length">
       <li v-for="(item, index) in productData" :key="index" class="product" @click="showDetail(item.productId)">
         <span class="delete" v-if="type === 'myinfo'" @click.stop="deleteOne(item.productId)">
           <i class="fa fa-trash"></i>
@@ -13,6 +13,9 @@
         <p class="name">{{item.productName}}</p>
       </li>
     </ul>
+    <div v-if="!productData.length" class="no-item">
+      您搜索的商品暂时没有哦~
+    </div>
   </div>
 </template>
 
@@ -98,4 +101,8 @@ export default {
         padding: 0 5px;
         font-size: $font-size-small;
         color: $color-text;
+  .no-item
+    text-align: center;
+    font-size: $font-size-large;
+    color: $color-theme;
 </style>

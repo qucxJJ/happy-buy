@@ -1,13 +1,14 @@
 <template>
   <div class="order-list">
     <tab-header name="订单管理" en-name="Order manage"></tab-header>
-    <div class="main">
+    <div class="main" >
       <div class="tab-btn-container">
         <div class="tab" :class="{'cur': showType === 0}" @click="showType = 0">全部订单</div>
         <div class="tab" :class="{'cur': showType === 1}" @click="showType = 1">待付款</div>
         <div class="tab" :class="{'cur': showType === 2}" @click="showType = 2">待发货</div>
         <div class="tab" :class="{'cur': showType === 3}" @click="showType = 3">待收货</div>
         <div class="tab" :class="{'cur': showType === 4}" @click="showType = 4">待评价</div>
+        <div class="tab" :class="{'cur': showType === 5}" @click="showType = 5">已取消</div>
       </div>
       <div class="table-con">
         <table>
@@ -22,7 +23,7 @@
           </tr>
           </thead>
         </table>
-        <table v-for="(order, index) in orderList" :key="index">
+        <table v-for="(order, index) in orderList" :key="index" v-if="orderList.length">
           <thead>
           <tr>
             <th>
@@ -61,10 +62,10 @@
             </td>
             <td :rowspan="order.productList.length" v-if="index1 === 0">
               <router-link tag="span" :to="'/order-detail?orderNumber=' + order.orderNumber" class="btn">查看订单</router-link>
-              <router-link tag="span" :to="'/order-detail?orderNumber=' + order.orderNumber" class="btn" v-if="order.status === 1">立即付款</router-link>
-              <span class="btn" v-if="order.status === 1">取消订单</span>
-              <span class="btn" v-if="order.status === 3">确认收货</span>
-              <router-link tag="span" :to="'/evaluate-order?orderNumber=' + order.orderNumber" class="btn" v-if="order.status === 4 && order.isEvalAll === 0">去评价</router-link>
+              <span class="btn" v-if="order.status === 1" @click="showPayDialog(order.orderNumber)">立即付款</span>
+              <span class="btn" v-if="order.status === 1" @click="showCancelDialog(order.orderNumber)">取消订单</span>
+              <span class="btn" v-if="order.status === 3" @click="showReceivedDialog(order.orderNumber)">确认收货</span>
+              <router-link tag="span" :to="'/order-detail?orderNumber=' + order.orderNumber" v-if="order.status === 4 && order.isEvalAll === 0" class="btn">去评价</router-link>
             </td>
           </tr>
           <tr v-if="order.userMsg">
@@ -77,7 +78,31 @@
           </tr>
           </tbody>
         </table>
+        <div class="no-order" v-if="!orderList.length">
+          暂无订单
+        </div>
       </div>
+      <el-dialog title="付款" :visible.sync="payConfirmVisible" class="dialog">
+        请确认好您的订单信息后点击 确定 按钮进行付款哦~
+        <div slot="footer" class="dialog-footer">
+          <span @click="payConfirmVisible = false" class="cancel">取 消</span>
+          <span @click="payNow" class="confirm">确 定</span>
+        </div>
+      </el-dialog>
+      <el-dialog title="取消订单" :visible.sync="cancelConfirmVisible" class="dialog">
+        确认取消该订单吗？
+        <div slot="footer" class="dialog-footer">
+          <span @click="cancelConfirmVisible = false" class="cancel">取 消</span>
+          <span @click="cancelOrder" class="confirm">确 定</span>
+        </div>
+      </el-dialog>
+      <el-dialog title="确认收货" :visible.sync="receivedConfirmVisible" class="dialog">
+        确认您已经收到货物了吗？
+        <div slot="footer" class="dialog-footer">
+          <span @click="receivedConfirmVisible = false" class="cancel">取 消</span>
+          <span @click="receivedOrder" class="confirm">确 定</span>
+        </div>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -94,7 +119,11 @@ export default {
     return {
       showType: 0,
       orderList: [],
-      orderStatus: ['待付款', '待发货', '待收货', '已完成', '已取消']
+      orderStatus: ['待付款', '待发货', '待收货', '已完成', '已取消'],
+      payConfirmVisible: false,
+      cancelConfirmVisible: false,
+      receivedConfirmVisible: false,
+      handleOrderNumber: ''
     };
   },
   created () {
@@ -102,6 +131,69 @@ export default {
     this.getOrderList();
   },
   methods: {
+    receivedOrder () {
+      Service.received_order({
+        orderNumber: this.handleOrderNumber
+      })
+        .then(() => {
+          Message.success({
+            message: '收货成功啦~快去评价吧'
+          });
+          this.receivedConfirmVisible = false;
+          this.getOrderList();
+        })
+        .catch(res => {
+          Message.error({
+            message: res.errStr
+          });
+        });
+    },
+    showReceivedDialog (orderNumber) {
+      this.handleOrderNumber = orderNumber;
+      this.receivedConfirmVisible = true;
+    },
+    cancelOrder () {
+      Service.cancel_order({
+        orderNumber: this.handleOrderNumber
+      })
+        .then(() => {
+          Message.success({
+            message: '订单取消成功'
+          });
+          this.cancelConfirmVisible = false;
+          this.getOrderList();
+        })
+        .catch(res => {
+          Message.error({
+            message: res.errStr
+          });
+        });
+    },
+    showCancelDialog (orderNumber) {
+      this.handleOrderNumber = orderNumber;
+      this.cancelConfirmVisible = true;
+    },
+    payNow () {
+      Service.pay_order({
+        orderNumber: this.handleOrderNumber
+      })
+        .then(() => {
+          Message.success({
+            message: '付款成功啦~'
+          });
+          this.payConfirmVisible = false;
+          this.getOrderList();
+        })
+        .catch(res => {
+          Message.error({
+            message: res.errStr
+          });
+        });
+    },
+    showPayDialog (orderNumber) {
+      this.handleOrderNumber = orderNumber;
+      this.payConfirmVisible = true;
+    },
     getOrderList () {
       Service.get_order_list({
         type: this.showType
@@ -288,4 +380,75 @@ export default {
             width: 115px;
         td
           border: 1px solid #ccc;
+    .no-order
+      line-height: 200px;
+      text-align: center;
+      font-size: $font-size-large;
+      color: $color-theme;
+    .dialog /deep/ .el-dialog {
+      .el-dialog__header {
+        border-bottom: 1px solid $color-theme;
+      }
+
+      .main {
+        padding: 15px 20px;
+
+        .form-item {
+          margin-bottom: 10px;
+
+          .label {
+            display: inline-block;
+            width: 100px;
+            height: 40px;
+            line-height: 40px;
+            font-size: $font-size-normal;
+            text-align: right;
+            margin-right: 20px;
+            vertical-align: top;
+          }
+
+          .right {
+            display: inline-block;
+            height: 40px;
+            line-height: 40px;
+            font-size: $font-size-normal;
+          }
+
+          textarea {
+            width: 500px;
+            height: 70px;
+          }
+
+          .upload-pic {
+            display: inline-block;
+            width: 600px;
+          }
+        }
+      }
+
+      .dialog-footer {
+        span {
+          display: inline-block;
+          width: 100px;
+          height: 40px;
+          line-height: 40px;
+          text-align: center;
+          font-size: $font-size-normal;
+          box-sizing: border-box;
+          border-radius: 3px;
+          vertical-align: top;
+          cursor: pointer;
+
+          &.cancel {
+            color: $color-theme;
+            border: 1px solid $color-theme;
+          }
+
+          &.confirm {
+            color: #fff;
+            background: $color-theme;
+          }
+        }
+      }
+    }
 </style>

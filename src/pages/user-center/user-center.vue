@@ -1,6 +1,6 @@
 <template>
   <div class="user-center">
-    <detail-header></detail-header>
+    <breadcrumb :tags="breadData"></breadcrumb>
     <div class="main">
       <ul class="aside">
         <li class="aside-group">
@@ -59,17 +59,156 @@
 </template>
 
 <script type="text/ecmascript-6">
-import DetailHeader from '@/components/header/header.vue';
+import Breadcrumb from '@/components/Breadcrumb/breadcrumb.vue';
 import { mapGetters } from 'vuex';
 export default {
+  data () {
+    return {
+      breadData: [
+        {
+          name: '个人中心',
+          path: '/user-center/center'
+        }
+      ]
+    };
+  },
   components: {
-    DetailHeader
+    Breadcrumb
   },
   computed: {
     ...mapGetters([
       'userName',
       'avatar'
     ])
+  },
+  created () {
+    this.changeBreadData(this.$route.path);
+  },
+  watch: {
+    '$route.path' (newVal) {
+      this.changeBreadData(newVal);
+    }
+  },
+  methods: {
+    changeBreadData (newVal) {
+      switch (newVal) {
+        case '/user-center/info':
+          this.breadData = [
+            {
+              name: '个人中心',
+              path: '/user-center/center'
+            },
+            {
+              name: '个人信息',
+              path: ''
+            }];
+          break;
+        case '/user-center/safe':
+          this.breadData = [
+            {
+              name: '个人中心',
+              path: '/user-center/center'
+            },
+            {
+              name: '安全设置',
+              path: ''
+            }];
+          break;
+        case '/user-center/safe/modify-password':
+          this.breadData = [
+            {
+              name: '个人中心',
+              path: '/user-center/center'
+            },
+            {
+              name: '安全设置',
+              path: '/user-center/safe'
+            },
+            {
+              name: '修改密码',
+              path: ''
+            }];
+          break;
+        case '/user-center/safe/modify-phone':
+          this.breadData = [
+            {
+              name: '个人中心',
+              path: '/user-center/center'
+            },
+            {
+              name: '安全设置',
+              path: '/user-center/safe'
+            },
+            {
+              name: '修改手机',
+              path: ''
+            }];
+          break;
+        case '/user-center/safe/modify-email':
+          this.breadData = [
+            {
+              name: '个人中心',
+              path: '/user-center/center'
+            },
+            {
+              name: '安全设置',
+              path: '/user-center/safe'
+            },
+            {
+              name: '修改邮箱',
+              path: ''
+            }];
+          break;
+        case '/user-center/safe/modify-question':
+          this.breadData = [
+            {
+              name: '个人中心',
+              path: '/user-center/center'
+            },
+            {
+              name: '安全设置',
+              path: '/user-center/safe'
+            },
+            {
+              name: '修改安全问题',
+              path: ''
+            }];
+          break;
+        case '/user-center/address':
+          this.breadData = [
+            {
+              name: '个人中心',
+              path: '/user-center/center'
+            },
+            {
+              name: '收货地址',
+              path: ''
+            }];
+          break;
+        case '/user-center/order-list':
+          this.breadData = [
+            {
+              name: '个人中心',
+              path: '/user-center/center'
+            },
+            {
+              name: '订单管理',
+              path: ''
+            }];
+          break;
+        case '/user-center/eval-list':
+          this.breadData = [
+            {
+              name: '个人中心',
+              path: '/user-center/center'
+            },
+            {
+              name: '评价',
+              path: ''
+            }];
+          break;
+      }
+    }
   }
 };
 </script>
@@ -80,7 +219,7 @@ export default {
   width: 100%;
   .main
     width: 1080px;
-    margin: 30px auto 0;
+    margin: 10px auto 0;
     .aside
       display: inline-block;
       width: 150px;

@@ -16,6 +16,9 @@ export default {
   methods: {
     searchProduct () {
       this.$router.push(`/product-list?keyword=${this.keyword}`);
+    },
+    changeKeyword (keyword) {
+      this.keyword = keyword;
     }
   }
 };

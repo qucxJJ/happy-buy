@@ -1,10 +1,8 @@
 <template>
   <div class="product-list">
-    <detail-header></detail-header>
-    <search></search>
     <breadcrumb :tags="breadData"></breadcrumb>
     <div class="main">
-      <div class="sort-conf">
+      <div class="sort-conf" v-if="productData.length">
         <span class="btn">
           价格
           <span class="hide">
@@ -20,7 +18,7 @@
         <span class="btn" @click="changeSortType('payNum')">销量 <i class="fa" :class="payNumIcon"></i></span>
       </div>
       <list-show :productData="productData" @detail="showProductDetail"></list-show>
-      <div class="pager">
+      <div class="pager" v-if="productData.length">
         <el-pagination
           @current-change="handleCurrentChange"
           :current-page="search.page"
@@ -33,16 +31,12 @@
 </template>
 
 <script type="text/ecmascript-6">
-import DetailHeader from '@/components/header/header.vue';
-import Search from '@/components/search/search.vue';
 import Breadcrumb from '@/components/Breadcrumb/breadcrumb.vue';
 import ListShow from '@/components/list-show/list-show.vue';
 import Service from '@/api';
 import { Message } from 'element-ui';
 export default {
   components: {
-    DetailHeader,
-    Search,
     Breadcrumb,
     ListShow
   },
@@ -198,7 +192,7 @@ export default {
           background: $color-theme;
           cursor: pointer;
     .pager
-      margin-top: 30px;
+      margin-top: 10px;
       .el-pagination
         text-align: center;
 </style>

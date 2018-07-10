@@ -15,11 +15,13 @@ let obj = {
     get_county_list: '/cities/get_county_list',
     get_slider_pic: '/products/get_slider_pic',
     get_foot_list: '/users/get_foot_list',
+    get_collection_list: '/users/get_collection_list',
     get_cart_list: '/users/get_cart_list',
     get_express_list: '/express/get_express_list',
     get_order_list: '/orders/get_order_list',
     get_product_eval: '/evals/get_product_eval',
-    get_user_eval: '/evals/get_user_eval'
+    get_user_eval: '/evals/get_user_eval',
+    get_order_num: '/orders/get_order_num'
   },
   post: {
     login: '/users/login',

@@ -1,6 +1,5 @@
 <template>
   <div class="pay-success">
-    <detail-header></detail-header>
     <div class="main">
       <div class="tip">
         <i class="fa fa-check-circle-o"></i>{{this.text}}
@@ -14,11 +13,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-import DetailHeader from '@/components/header/header.vue';
 export default {
-  components: {
-    DetailHeader
-  },
   data () {
     return {
       type: '',

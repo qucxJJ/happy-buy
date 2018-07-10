@@ -1,6 +1,6 @@
 <template>
   <div class="order-detail">
-    <detail-header></detail-header>
+    <breadcrumb :tags="breadData"></breadcrumb>
     <div class="main">
       <div class="top">
         <ul>
@@ -173,16 +173,30 @@
 </template>
 
 <script type="text/ecmascript-6">
-import DetailHeader from '@/components/header/header.vue';
+import Breadcrumb from '@/components/Breadcrumb/breadcrumb.vue';
 import config from '@/common/js/config.js';
 import Service from '@/api';
 import { Message } from 'element-ui';
 export default {
   components: {
-    DetailHeader
+    Breadcrumb
   },
   data () {
     return {
+      breadData: [
+        {
+          name: '个人中心',
+          path: '/user-center/center'
+        },
+        {
+          name: '订单管理',
+          path: '/user-center/order-list'
+        },
+        {
+          name: '订单详情',
+          path: ''
+        }
+      ],
       order: {},
       orderStatus: ['待付款', '待发货', '待收货', '已完成', '已取消'],
       payConfirmVisible: false,
@@ -269,7 +283,7 @@ export default {
       })
         .then(() => {
           Message.success({
-            message: '收获成功啦~快去评价吧'
+            message: '收货成功啦~快去评价吧'
           });
           this.receivedConfirmVisible = false;
           this.getOrderDetail(this.order.orderNumber);
@@ -366,7 +380,7 @@ export default {
     margin: 0 auto;
 
     .top {
-      margin-top: 40px;
+      margin-top: 10px;
 
       li {
         line-height: 40px;

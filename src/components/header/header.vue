@@ -6,14 +6,14 @@
         <span class="btn" @click="register">免费注册</span>
       </div>
       <div class="user-info" v-show="isLogin">
-        <span class="btn">{{userName}}</span>
+        <span class="btn">欢迎 {{userName}}</span>
         <span class="btn" @click="logout">退出</span>
       </div>
       <ul class="right-list">
+        <li @click="toIndex">首页</li>
         <li @click="toShopCart">购物车（{{cartNum}}）</li>
         <li @click="toUserCenter">个人中心</li>
         <li @click="toCollectionList">收藏夹</li>
-        <li>关于我们</li>
       </ul>
     </div>
   </div>
@@ -56,9 +56,13 @@ export default {
         this.setAvatar('');
         this.setIsLogin(false);
       });
+      this.$router.push('/');
     },
     register () {
       this.$router.push('/register');
+    },
+    toIndex () {
+      this.$router.push('/');
     },
     toUserCenter () {
       this.userName ? this.$router.push('/user-center') : this.$router.push('/login');

@@ -1,7 +1,5 @@
 <template>
   <div class="collection-list">
-    <detail-header></detail-header>
-    <search></search>
     <breadcrumb :tags="breadData"></breadcrumb>
     <div class="main">
       <list-show
@@ -11,7 +9,7 @@
         type="myinfo"></list-show>
     </div>
     <el-dialog title="删除收藏夹商品" :visible.sync="dialogConfirmVisible" class="dialog">
-      确认删除这条足迹信息吗？删除之后找起来很麻烦哦~
+      确认删除这条收藏信息吗？删除之后找起来很麻烦哦~
       <div slot="footer" class="dialog-footer">
         <span @click="dialogConfirmVisible = false" class="cancel">取 消</span>
         <span @click="deleteOne" class="confirm">确 定</span>
@@ -21,16 +19,12 @@
 </template>
 
 <script type="text/ecmascript-6">
-import DetailHeader from '@/components/header/header.vue';
-import Search from '@/components/search/search.vue';
 import Breadcrumb from '@/components/Breadcrumb/breadcrumb.vue';
 import ListShow from '@/components/list-show/list-show.vue';
 import Service from '@/api';
 import { Message } from 'element-ui';
 export default {
   components: {
-    DetailHeader,
-    Search,
     Breadcrumb,
     ListShow
   },

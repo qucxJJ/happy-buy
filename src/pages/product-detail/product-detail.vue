@@ -1,7 +1,6 @@
 <template>
   <div class="product-detail">
-    <detail-header></detail-header>
-    <search></search>
+    <breadcrumb :tags="breadData"></breadcrumb>
     <div class="main">
       <div class="top">
         <div class="picture-container">
@@ -107,18 +106,18 @@
           <div class="detail-info" v-html="productInfo.detail"></div>
         </div>
         <div class="tab-content evaluation" v-show="showType === 2">
-          <div class="eval-tab">
+          <div class="eval-tab" v-show="evals.length">
             <div class="good-rate">
               <span>{{rates.goodRate}}%</span>好评率
             </div>
             <ul class="tab-con">
-              <li :class="{'cur': evalType === 0}">全部评价（{{rates.total}}）</li>
-              <li :class="{'cur': evalType === 1}">好评（{{rates.good}}）</li>
-              <li :class="{'cur': evalType === 2}">中评（{{rates.middle}}）</li>
-              <li :class="{'cur': evalType === 3}">差评（{{rates.bad}}）</li>
+              <li :class="{'cur': evalType === 0}" @click="evalType = 0">全部评价（{{rates.total}}）</li>
+              <li :class="{'cur': evalType === 1}" @click="evalType = 1">好评（{{rates.good}}）</li>
+              <li :class="{'cur': evalType === 2}" @click="evalType = 2">中评（{{rates.middle}}）</li>
+              <li :class="{'cur': evalType === 3}" @click="evalType = 3">差评（{{rates.bad}}）</li>
             </ul>
           </div>
-          <div class="eval-content">
+          <div class="eval-content" v-show="evals.length">
             <ul>
               <li v-for="(item, index) in evals" :key="index" class="eval-item">
                 <img :src="item.avatar" alt="" class="avatar">
@@ -137,6 +136,9 @@
               </li>
             </ul>
           </div>
+          <div class="no-eval" v-show="!evals.length">
+            暂无评价
+          </div>
         </div>
         <div class="tab-content recommend" v-show="showType === 3">
           猜你喜欢
@@ -147,18 +149,22 @@
 </template>
 
 <script type="text/ecmascript-6">
-import DetailHeader from '@/components/header/header.vue';
-import Search from '@/components/search/search.vue';
+import Breadcrumb from '@/components/Breadcrumb/breadcrumb.vue';
 import Service from '@/api';
 import { Message } from 'element-ui';
 import { mapMutations, mapGetters } from 'vuex';
 export default {
   components: {
-    DetailHeader,
-    Search
+    Breadcrumb
   },
   data () {
     return {
+      breadData: [
+        {
+          name: '商品详情',
+          path: ''
+        }
+      ],
       productId: '',
       productInfo: '',
       selectedSize: '',
@@ -202,7 +208,7 @@ export default {
         this.rates.good = data.goodNum;
         this.rates.middle = data.middleNum;
         this.rates.bad = data.badNum;
-        this.rates.goodRate = parseInt((data.goodNum / data.totalNum) * 100);
+        this.rates.goodRate = data.totalNum === 0 ? 0 : parseInt((data.goodNum / data.totalNum) * 100);
         this.rates.total = data.totalNum;
       }).catch(res => {
         Message.error({
@@ -311,6 +317,13 @@ export default {
         Message.success({
           message: '加入购物车成功啦~'
         });
+        Service.get_user_info().then(data => {
+          this.setCartNum(data.cartNum);
+        }).catch(res => {
+          if (res.errNo && res.errNum === 1) {
+            this.setCartNum(0);
+          }
+        });
       }).catch(res => {
         if (res.errNo === 11) {
           this.$router.push('/login');
@@ -368,8 +381,14 @@ export default {
       this.$router.push('/order-confirm');
     },
     ...mapMutations({
-      setPayList: 'SET_PAY_LIST'
+      setPayList: 'SET_PAY_LIST',
+      setCartNum: 'SET_CART_NUM'
     })
+  },
+  watch: {
+    evalType () {
+      this.getEvals();
+    }
   },
   computed: {
     ...mapGetters([
@@ -824,4 +843,9 @@ export default {
                 padding-left: 15px;
                 color: #999;
 
+        .no-eval
+          font-size: $font-size-large;
+          color: $color-theme;
+          text-align: center;
+          line-height: 200px;
 </style>

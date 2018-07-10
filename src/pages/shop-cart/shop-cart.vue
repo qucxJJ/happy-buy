@@ -1,9 +1,7 @@
 <template>
   <div class="shop-cart">
-    <detail-header></detail-header>
-    <search></search>
     <breadcrumb :tags="breadData"></breadcrumb>
-    <div class="main">
+    <div class="main" v-if="cartList.length">
       <table>
         <thead>
         <tr>
@@ -58,6 +56,9 @@
         <span class="btn" @click="toPayment">去结算</span>
       </div>
     </div>
+    <div class="no-good" v-if="!cartList.length">
+      购物车空空如也~
+    </div>
     <el-dialog title="删除购物车商品" :visible.sync="dialogConfirmVisible" class="dialog">
       确认删除吗？
       <div slot="footer" class="dialog-footer">
@@ -69,16 +70,12 @@
 </template>
 
 <script type="text/ecmascript-6">
-import DetailHeader from '@/components/header/header.vue';
-import Search from '@/components/search/search.vue';
 import Breadcrumb from '@/components/Breadcrumb/breadcrumb.vue';
 import Service from '@/api';
 import { Message } from 'element-ui';
 import { mapMutations } from 'vuex';
 export default {
   components: {
-    DetailHeader,
-    Search,
     Breadcrumb
   },
   data () {
@@ -151,6 +148,13 @@ export default {
         });
         this.getCartList();
         this.dialogConfirmVisible = false;
+        Service.get_user_info().then(data => {
+          this.setCartNum(data.cartNum);
+        }).catch(res => {
+          if (res.errNo && res.errNum === 1) {
+            this.setCartNum(0);
+          }
+        });
       }).catch(res => {
         Message.error({
           message: res.errStr
@@ -168,7 +172,8 @@ export default {
       this.$router.push('/order-confirm');
     },
     ...mapMutations({
-      setPayList: 'SET_PAY_LIST'
+      setPayList: 'SET_PAY_LIST',
+      setCartNum: 'SET_CART_NUM'
     })
   },
   computed: {
@@ -361,6 +366,11 @@ export default {
         font-weight: bold;
         text-align: center;
         cursor: pointer;
+  .no-good
+    line-height: 200px;
+    font-size: $font-size-large;
+    color: $color-theme;
+    text-align: center;
   .dialog /deep/ .el-dialog
     .el-dialog__header
       border-bottom: 1px solid $color-theme;

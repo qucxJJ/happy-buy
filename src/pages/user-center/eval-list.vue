@@ -1,7 +1,7 @@
 <template>
   <div class="eval-list">
     <tab-header name="评价列表" en-name="Evaluation list"></tab-header>
-    <table>
+    <table v-if="evalList.length">
       <thead>
       <tr>
         <th>评价</th>
@@ -31,6 +31,9 @@
       </tr>
       </tbody>
     </table>
+    <div class="no-eval" v-if="!evalList.length">
+      您还没有提交过评价哦~
+    </div>
   </div>
 </template>
 
@@ -175,4 +178,9 @@ export default {
               text-align: center;
               color: #666;
               vertical-align: center;
+  .no-eval
+    text-align: center;
+    font-size: $font-size-large;
+    color: $color-theme;
+    line-height: 200px;
 </style>

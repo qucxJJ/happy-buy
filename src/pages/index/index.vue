@@ -1,7 +1,5 @@
 <template>
   <div class="container">
-    <detail-header></detail-header>
-    <search></search>
     <div class="main">
       <div class="top">
         <side-nav class="aside"></side-nav>
@@ -32,8 +30,6 @@
 </template>
 
 <script type="text/ecmascript-6">
-import DetailHeader from '@/components/header/header';
-import Search from '@/components/search/search';
 import SideNav from '@/components/side-nav/side-nav.vue';
 import { swiper, swiperSlide } from 'vue-awesome-swiper';
 import 'swiper/dist/css/swiper.css';
@@ -67,8 +63,6 @@ export default {
     };
   },
   components: {
-    DetailHeader,
-    Search,
     SideNav,
     swiper,
     swiperSlide

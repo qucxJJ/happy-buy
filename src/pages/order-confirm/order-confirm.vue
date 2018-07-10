@@ -1,6 +1,5 @@
 <template>
   <div class="payment">
-    <detail-header></detail-header>
     <div class="main">
       <div class="address-part">
         <h2 class="title">选择收货地址</h2>
@@ -72,14 +71,12 @@
 </template>
 
 <script type="text/ecmascript-6">
-import DetailHeader from '@/components/header/header.vue';
 import AddressModel from '@/components/address-model/address-model.vue';
 import Service from '@/api';
 import { Message } from 'element-ui';
 import { mapGetters } from 'vuex';
 export default {
   components: {
-    DetailHeader,
     AddressModel
   },
   data () {
@@ -92,7 +89,6 @@ export default {
     };
   },
   created () {
-    console.log(this.payList);
     this.getExpressList();
   },
   methods: {
@@ -113,15 +109,18 @@ export default {
       this.selectedExpress = express;
     },
     submitOrder () {
+      if (!this.selectedAddress) {
+        Message.error({
+          message: '您还没有添加过收货地址哦~'
+        });
+        return;
+      }
       if (!this.selectedExpress.expressId) {
         Message.error({
           message: '要选择快物流方式才能提交哦~'
         });
         return;
       }
-      console.log(this.payList.map(item => {
-        return item.id;
-      }));
       let tempObj = {
         addressId: this.selectedAddress.addressId,
         expressId: this.selectedExpress.expressId,

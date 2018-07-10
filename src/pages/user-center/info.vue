@@ -72,6 +72,7 @@ export default {
   created () {
     Service.get_user_extra_data().then(data => {
       this.newAvatar.url = data.avatar.url;
+      console.log(this.newAvatar);
       this.newAvatar.name = data.avatar.name;
       this.realName = data.realName;
       this.sex = data.sex;
